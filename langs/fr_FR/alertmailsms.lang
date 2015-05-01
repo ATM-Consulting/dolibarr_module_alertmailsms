@@ -11,3 +11,8 @@ AlertMailSmsTrigger=Événement sur lequel l'alerte est déclenchée
 
 ALERTMAILSMS_TRIGGER_ORDER_VALIDATE=Validation de la commande
 ALERTMAILSMS_TRIGGER_SHIPPING_VALIDATE=Validation de l'expédition
+
+AlertMailSmsTabName=Alerte Mail/SMS
+AlertMailSmsTabContact=Contacts/Adresses - Alerte Mail/Sms
+AlertMailSms_Mail=Alerte mail
+AlertMailSms_Sms=Alerte SMS

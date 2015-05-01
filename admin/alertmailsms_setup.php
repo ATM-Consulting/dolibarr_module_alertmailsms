@@ -34,6 +34,7 @@ require_once '../lib/alertmailsms.lib.php';
 
 // Translations
 $langs->load("alertmailsms@alertmailsms");
+$langs->load("admin");
 
 // Access control
 if (! $user->admin) {

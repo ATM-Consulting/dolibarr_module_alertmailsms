@@ -145,17 +145,16 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
+		//ORDER_VALIDATE | SHIPPING_VALIDATE
+		$actionTrigger = $conf->global->ALERTMAILSMS_TRIGGER;
 		
-		if ($action == 'ORDER_VALIDATE') {
-			dol_syslog(
-				"Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
-			);
-		} elseif ($action == 'SHIPPING_VALIDATE') {
-			dol_syslog(
-				"Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
-			);
+		//var_dump($object);exit;
 		
-
+		if ($action == $actionTrigger) 
+		{
+			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+		}
+		
 		return 0;
 	}
 }

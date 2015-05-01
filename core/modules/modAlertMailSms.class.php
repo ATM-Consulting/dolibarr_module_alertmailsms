@@ -167,8 +167,9 @@ class modAlertMailSms extends DolibarrModules
 		);
 
 		// Array to add new pages in new tabs
-		// Example:
+		// 	Example:
 		$this->tabs = array(
+			'contact:+AlertMailSms:AlertMailSmsTabName:alertmailsms@alertmailsms:$user->rights->societe->contact->creer:/alertmailsms/tab.php?id=__ID__',
 			//	// To add a new tab identified by code tabname1
 			//	'objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',
 			//	// To add another new tab identified by code tabname2
@@ -219,20 +220,13 @@ class modAlertMailSms extends DolibarrModules
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
-		$this->rights[$r][0] = 104551;
+		/*$this->rights[$r][0] = 104551;
 		$this->rights[$r][1] = 'Autoriser association alerte mail';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'assign';
 		$this->rights[$r][5] = 'mail';
-		$r++;
+		$r++;*/
 		
-		$this->rights[$r][0] = 104552;
-		$this->rights[$r][1] = 'Autoriser association alerte SMS';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'assign';
-		$this->rights[$r][5] = 'sms';
-		$r++;
-	
 	}
 
 	/**
