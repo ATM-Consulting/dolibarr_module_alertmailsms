@@ -145,13 +145,36 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
+		global $db;
+				
 		//ORDER_VALIDATE | SHIPPING_VALIDATE
 		$actionTrigger = $conf->global->ALERTMAILSMS_TRIGGER;
 		
-		//var_dump($object);exit;
-		
 		if ($action == $actionTrigger) 
 		{
+            if(!defined('INC_FROM_DOLIBARR')) define('INC_FROM_DOLIBARR',true);
+            dol_include_once('/alertmailsms/config.php');
+			dol_include_once('/alertmailsms/class/alertmailsms.class.php');
+			
+			// TODO $object->liste_contact(-1, 'internal', 1) pour récupérer la liste des contacts interne (llx_user)
+			// llx_user devra aussi implémenter les champs alert_mail et alert_sms
+			
+			// Array of id contacts (llx_socpeople)
+			$TIdContact = $object->liste_contact(-1, 'external', 1);
+			if (count($TIdContact) > 0)
+			{
+				$TAlertMailSms = new TAlertMailSms;
+				foreach ($TIdContact as $id)
+				{
+					$TContact = new TContact($db);
+					$TContact->fetch($id);
+					$TContact->getAlertAttributes();
+					
+					$TAlertMailSms->send($TContact);
+				}
+			}
+			
+			exit;
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 		}
 		

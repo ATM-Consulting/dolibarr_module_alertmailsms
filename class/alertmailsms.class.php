@@ -10,11 +10,20 @@ class TAlertMailSms extends TObjetStd
 	{
 		global $conf;
 		
+		dol_include_once('/core/class/CMailFile.class.php');
+		dol_include_once('/core/class/CSMSFile.class.php');
+		
 		$this->platform = $conf->global->ALERTMAILSMS_PLATFORM;
 		$this->send = false;
 		$this->errors = array();
 		
 		$this->_includeClass();
+	}
+	
+	public function resetVar()
+	{
+		$this->send = false;
+		$this->errors = array();
 	}
 
 	public function save()
@@ -35,7 +44,7 @@ class TAlertMailSms extends TObjetStd
 		
 		switch ($this->platform) {
 			case 'OVH':
-				require_once($this->platform.'/src/Api.php');
+				dol_include_once('/alertmailsms/'.$this->platform.'/src/Api.php');
 				break;
 			
 			default:
@@ -58,19 +67,24 @@ class TAlertMailSms extends TObjetStd
 		return $res;
 	}
 	
-	public function sendMail()
+	private function _sendMail(&$object)
 	{
-		
+		// ^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$
+		// $object->email;
 	}
 	
-	public function sendSms()
+	private function _sendSms(&$object)
 	{
+		$object->phone_pro;
 		
+		$CSMS = new CSMSFile($object->phone_pro, $object->phone_pro, "Msg de test", 0, 0, 3, 1);
 	}
 	
-	public function sendBatch()
+	public function send(&$object, $forceMail = false, $forceSms = false)
 	{
+		if ($object->alert_mail || $forceMail) $this->_sendMail($object);
 		
+		if ($object->alert_sms || $forceSms) $this->_sendSms($object);
 	}
 }
 
@@ -87,13 +101,13 @@ class TContact extends Contact
 		
 		if ($res > 0)
 		{
-			$this->_getAlertAttributes();
+			$this->getAlertAttributes();
 		}
 		
 		return $res;
 	}
 	
-	private function _getAlertAttributes()
+	public function getAlertAttributes()
 	{
 		$sql = 'SELECT alert_mail, alert_sms FROM '.MAIN_DB_PREFIX.'socpeople WHERE rowid = '.$this->id;
 		$resql = $this->db->query($sql);
