@@ -107,9 +107,39 @@ print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
 $var=!$var;
 print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AlertMailSmsTrigger").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_TRIGGER">';
+$TTrigger = array(
+	'ORDER_VALIDATE' => $langs->transnoentities('ALERTMAILSMS_TRIGGER_ORDER_VALIDATE')
+	,'SHIPPING_VALIDATE' => $langs->transnoentities('ALERTMAILSMS_TRIGGER_SHIPPING_VALIDATE')
+);
+print $form->selectarray('ALERTMAILSMS_TRIGGER', $TTrigger, $conf->global->ALERTMAILSMS_TRIGGER);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$form->textwithpicto($langs->trans('AlertMailSmsForceStop'), $langs->trans('AlertMailSmsForStopInfo')).'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_STOP_ON_ERR">';
+print $form->selectyesno('ALERTMAILSMS_STOP_ON_ERR', $conf->global->ALERTMAILSMS_PLATFORM, 1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("AlertMailSmsPlatformChoice").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="right" width="400">';
+print '<td align="right" width="500">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_ALERTMAILSMS_PLATFORM">';
@@ -120,18 +150,26 @@ print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("AlertMailSmsTrigger").'</td>';
+print '<td>'.$langs->trans("AlertMailSmsSubjectMail").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="right" width="400">';
+print '<td align="right" width="500">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_ALERTMAILSMS_TRIGGER">';
-$TTrigger = array(
-	'ORDER_VALIDATE' => $langs->transnoentities('ALERTMAILSMS_TRIGGER_ORDER_VALIDATE')
-	,'SHIPPING_VALIDATE' => $langs->transnoentities('ALERTMAILSMS_TRIGGER_SHIPPING_VALIDATE')
-);
-print $form->selectarray('ALERTMAILSMS_TRIGGER', $TTrigger, $conf->global->ALERTMAILSMS_TRIGGER);
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_SUBJECT_MAIL">';
+print '<input type="text" name="ALERTMAILSMS_SUBJECT_MAIL" size="55" value="'.$conf->global->ALERTMAILSMS_SUBJECT_MAIL.'">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AlertMailSmsCoreMsgMail").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_MSG_MAIL">';
+print $form->textwithpicto('<textarea rows="4" cols="52" name="ALERTMAILSMS_MSG_MAIL" style="vertical-align:middle;">'.$conf->global->ALERTMAILSMS_MSG_MAIL.'</textarea><input type="submit" class="button" value="'.$langs->trans("Modify").'">', $langs->trans('AlertMailSms_Info_Mail'), -1);
 print '</form>';
 print '</td></tr>';
 

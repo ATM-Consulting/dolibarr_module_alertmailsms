@@ -11,7 +11,7 @@ class TAlertMailSms extends TObjetStd
 		global $conf;
 		
 		dol_include_once('/core/class/CMailFile.class.php');
-		dol_include_once('/core/class/CSMSFile.class.php');
+		// dol_include_once('/core/class/CSMSFile.class.php'); // Dolibarr Experimental
 		
 		$this->platform = $conf->global->ALERTMAILSMS_PLATFORM;
 		$this->send = false;
@@ -67,24 +67,52 @@ class TAlertMailSms extends TObjetStd
 		return $res;
 	}
 	
-	private function _sendMail(&$object)
+	private function _sendMail(&$object, &$conf)
 	{
 		// ^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$
 		// $object->email;
+		
+		if (empty($object->email)) return false;
+		
+		$TSearch = array('__CONTACTCIVILITY__', '__CONTACTNAME__', '__CONTACTFIRSTNAME__', '__CONTACTADDRESS__');
+		$TReplace = array($object->civility_id, $object->lastname, $object->firstname, $object->address);
+
+		$msg = str_replace($TSearch, $TReplace, $conf->global->ALERTMAILSMS_MSG_MAIL);
+
+		// Construct mail
+		$CMail = new CMailFile(	$conf->global->ALERTMAILSMS_SUBJECT_MAIL
+								,$object->email
+								,$conf->global->MAIN_MAIL_EMAIL_FROM
+								,$msg
+								/*,$filename_list=array()
+								,$mimetype_list=array()
+								,$mimefilename_list=array()
+								,$addr_cc=""
+								,$addr_bcc=""
+								,$deliveryreceipt=0
+								,$msgishtml=0
+								,$errors_to=''
+								,$css=''*/
+							);
+		
+		// Send mail
+		$CMail->sendfile();
+		
+		if ($CMail->error) $this->errors[] = $CMail->error;
 	}
 	
-	private function _sendSms(&$object)
+	private function _sendSms(&$object, &$conf)
 	{
 		$object->phone_pro;
 		
 		$CSMS = new CSMSFile($object->phone_pro, $object->phone_pro, "Msg de test", 0, 0, 3, 1);
 	}
 	
-	public function send(&$object, $forceMail = false, $forceSms = false)
+	public function send(&$object, &$conf, $forceMail = false, $forceSms = false)
 	{
-		if ($object->alert_mail || $forceMail) $this->_sendMail($object);
+		if ($object->alert_mail || $forceMail) $this->_sendMail($object, $conf);
 		
-		if ($object->alert_sms || $forceSms) $this->_sendSms($object);
+		if ($object->alert_sms || $forceSms) $this->_sendSms($object, $conf);
 	}
 }
 

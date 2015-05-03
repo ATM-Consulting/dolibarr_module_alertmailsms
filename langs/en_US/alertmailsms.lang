@@ -6,8 +6,10 @@ ATMAbout = This module has been developed by <a href="http://www.atm-consulting.
 AlertMailSmsSetup = Alert Mail/SMS module setup
 AlertMailSmsAbout = About Alert Mail/SMS
 
-AlertMailSmsPlatformChoice=Platform used to send SMS
 AlertMailSmsTrigger=Event on which the alert is triggered
+AlertMailSmsForceStop=Do not commit the object if the event returns an error
+AlertMailSmsForStopInfo=Be careful if multiple contacts are associated. An error on one of them will not necessarily stop send an alert to other contacts.
+AlertMailSmsPlatformChoice=Platform used to send SMS
 
 ALERTMAILSMS_TRIGGER_ORDER_VALIDATE=Order validation
 ALERTMAILSMS_TRIGGER_SHIPPING_VALIDATE=Shipping validation
@@ -16,3 +18,4 @@ AlertMailSmsTabName=Mail/SMS Alert
 AlertMailSmsTabContact=Contacts/Address - Mail/Sms Alert
 AlertMailSms_Mail=Mail alert
 AlertMailSms_Sms=SMS alert
+AlertMailSms_Info_Mail=To customize the mail sending you can use overrides values:<br /><b>__CONTACTCIVILITY__</b> : Contact civility<br /><b>__CONTACTNAME__</b> : Contact lastname<br /><b>__CONTACTFIRSTNAME__</b> : Contact firstname<br /><b>__CONTACTADDRESS__</b> : Contact address

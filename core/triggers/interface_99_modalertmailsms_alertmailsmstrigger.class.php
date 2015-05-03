@@ -146,8 +146,8 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		global $db;
-				
-		//ORDER_VALIDATE | SHIPPING_VALIDATE
+			
+		//ORDER_VALIDATE || SHIPPING_VALIDATE
 		$actionTrigger = $conf->global->ALERTMAILSMS_TRIGGER;
 		
 		if ($action == $actionTrigger) 
@@ -170,14 +170,30 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 					$TContact->fetch($id);
 					$TContact->getAlertAttributes();
 					
-					$TAlertMailSms->send($TContact);
+					$TAlertMailSms->send($TContact, $conf);
+				}
+				
+				if (count($TAlertMailSms->errors) > 0) 
+				{
+					$this->_showError($TAlertMailSms);
+					if (!empty($conf->global->ALERTMAILSMS_STOP_ON_ERR)) return -1; // Dot not validate object
 				}
 			}
 			
-			exit;
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+			
+			return 1;
 		}
 		
 		return 0;
 	}
+
+	private function _showError(&$TAlertMailSms)
+	{
+		$dolibarr_version = versiondolibarrarray();	
+		
+		if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessages('', $TAlertMailSms->errors, 'errors');
+		else setEventMessage($TAlertMailSms->errors, 'errors');
+	}
+	
 }

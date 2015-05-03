@@ -130,7 +130,7 @@ class modAlertMailSms extends DolibarrModules
 		$this->hidden = false;
 		// List of modules class name as string that must be enabled if this module is enabled
 		// Example : $this->depends('modAnotherModule', 'modYetAnotherModule')
-		$this->depends = array();
+		$this->depends = array('modSociete');
 		// List of modules id to disable if this one is disabled
 		$this->requiredby = array();
 		// List of modules id this module is in conflict with
@@ -240,7 +240,9 @@ class modAlertMailSms extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		$sql = array('ALTER TABLE '.MAIN_DB_PREFIX.'socpeople ADD COLUMN (alert_mail BOOLEAN DEFAULT 0, alert_sms BOOLEAN DEFAULT 0)');
+		$sql = array();
+		
+		if (!$this->_alertAttributesExists()) $sql[] = 'ALTER TABLE '.MAIN_DB_PREFIX.'socpeople ADD COLUMN (alert_mail BOOLEAN DEFAULT 0, alert_sms BOOLEAN DEFAULT 0)';
 		
 		return $this->_init($sql, $options);
 	}
@@ -258,6 +260,30 @@ class modAlertMailSms extends DolibarrModules
 		$sql = array();
 
 		return $this->_remove($sql, $options);
+	}
+	
+	private function _alertAttributesExists()
+	{
+		global $db;
+		
+		$alert_attributes_exists = false;
+		
+		$sql = 'SHOW COLUMNS FROM '.MAIN_DB_PREFIX.'socpeople';
+		$resql = $db->query($sql);
+		
+		if ($resql)
+		{
+			while ($def = $db->fetch_array($resql))
+			{
+				if ($def['Field'] == 'alert_mail' || $def['Field'] == 'alert_sms')
+				{
+					$alert_attributes_exists = true;
+					break;
+				}
+			}
+		}
+		
+		return $alert_attributes_exists;
 	}
 
 }
