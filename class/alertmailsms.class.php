@@ -10,8 +10,6 @@ class TAlertMailSms extends TObjetStd
 	{
 		global $conf;
 		
-		dol_include_once('/core/class/CMailFile.class.php');
-		// dol_include_once('/core/class/CSMSFile.class.php'); // Dolibarr Experimental
 		
 		$this->platform = $conf->global->ALERTMAILSMS_PLATFORM;
 		$this->send = false;
@@ -40,11 +38,16 @@ class TAlertMailSms extends TObjetStd
 	{
 		global $langs;
 		
+		dol_include_once('/core/class/CMailFile.class.php');
+		// dol_include_once('/core/class/CSMSFile.class.php'); // Experimental Dolibarr
+		
 		if (empty($this->platform)) $this->errors[] = $langs->trans("ALERTMAILSMS_ERR_NO_PLATFORM");
 		
 		switch ($this->platform) {
 			case 'OVH':
-				dol_include_once('/alertmailsms/'.$this->platform.'/src/Api.php');
+				//dol_include_once('/alertmailsms/OVH/src/Api.php');
+				dol_include_once('/alertmailsms/OVH/vendor/autoload.php');
+				
 				break;
 			
 			default:
@@ -113,6 +116,20 @@ class TAlertMailSms extends TObjetStd
 		if ($object->alert_mail || $forceMail) $this->_sendMail($object, $conf);
 		
 		if ($object->alert_sms || $forceSms) $this->_sendSms($object, $conf);
+	}
+	
+	public function testGetOVH($apiKey, $secretKey, $consumerKey)
+	{
+		
+		$ovh = new Api( 
+			$apiKey,
+            $secretKey,
+            'ovh-eu',
+            $consumerKey
+		);
+		
+		$a = $ovh->get('/me');
+		var_dump($a);
 	}
 }
 

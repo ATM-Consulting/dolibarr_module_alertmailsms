@@ -173,6 +173,82 @@ print $form->textwithpicto('<textarea rows="4" cols="52" name="ALERTMAILSMS_MSG_
 print '</form>';
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AlertMailSmsPhoneNum").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_PHONE_NUMBER">';
+print '<input type="text" name="ALERTMAILSMS_PHONE_NUMBER" size="55" value="'.$conf->global->ALERTMAILSMS_PHONE_NUMBER.'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AlertMailSmsCoreMsgSms").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_MSG_SMS">';
+print $form->textwithpicto('<textarea rows="4" cols="52" name="ALERTMAILSMS_MSG_SMS" style="vertical-align:middle;">'.$conf->global->ALERTMAILSMS_MSG_SMS.'</textarea><input type="submit" class="button" value="'.$langs->trans("Modify").'">', $langs->trans('AlertMailSms_Info_Sms'), -1);
+print '</form>';
+print '</td></tr>';
+
+print '</table>';
+
+
+
+//OVH
+$var = false;
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("OVH").'</td>'."\n";
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AlertMailSmsOvhApiKey").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_OVH_KEY">';
+print '<input type="text" name="ALERTMAILSMS_OVH_KEY" size="55" value="'.$conf->global->ALERTMAILSMS_OVH_KEY.'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AlertMailSmsOvhSecret").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_OVH_SECRET">';
+print '<input type="text" name="ALERTMAILSMS_OVH_SECRET" size="55" value="'.$conf->global->ALERTMAILSMS_OVH_SECRET.'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AlertMailSmsOvhConsumerKey").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_OVH_CONSUMER_KEY">';
+print '<input type="text" name="ALERTMAILSMS_OVH_CONSUMER_KEY" size="55" value="'.$conf->global->ALERTMAILSMS_OVH_CONSUMER_KEY.'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
 print '</table>';
 
 llxFooter();
