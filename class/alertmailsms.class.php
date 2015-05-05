@@ -5,17 +5,17 @@ class TAlertMailSms extends TObjetStd
 	var $platform;
 	var $send;
 	var $errors;
+	var $ovh_api;
 	
 	public function __construct()
 	{
-		global $conf;
-		
-		
+		global $conf, $langs;
+
 		$this->platform = $conf->global->ALERTMAILSMS_PLATFORM;
 		$this->send = false;
 		$this->errors = array();
 		
-		$this->_includeClass();
+		$this->_includeClass($conf, $langs);
 	}
 	
 	public function resetVar()
@@ -34,10 +34,8 @@ class TAlertMailSms extends TObjetStd
 		return true;
 	}
 	
-	private function _includeClass()
-	{
-		global $langs;
-		
+	private function _includeClass(&$conf, &$langs)
+	{		
 		dol_include_once('/core/class/CMailFile.class.php');
 		// dol_include_once('/core/class/CSMSFile.class.php'); // Experimental Dolibarr
 		
@@ -45,9 +43,8 @@ class TAlertMailSms extends TObjetStd
 		
 		switch ($this->platform) {
 			case 'OVH':
-				//dol_include_once('/alertmailsms/OVH/src/Api.php');
-				dol_include_once('/alertmailsms/OVH/vendor/autoload.php');
-				
+				dol_include_once('/alertmailsms/loadOVH.php');
+				$this->ovh_api = new OvhApi($conf->global->ALERTMAILSMS_OVH_KEY, $conf->global->ALERTMAILSMS_OVH_SECRET, 'ovh-eu', $conf->global->ALERTMAILSMS_OVH_CONSUMER_KEY);
 				break;
 			
 			default:
@@ -106,10 +103,63 @@ class TAlertMailSms extends TObjetStd
 	
 	private function _sendSms(&$object, &$conf)
 	{
-		$object->phone_pro;
+		$phone_number = $this->formatPhoneNumber($object->phone_pro);
 		
-		$CSMS = new CSMSFile($object->phone_pro, $object->phone_pro, "Msg de test", 0, 0, 3, 1);
+		$TSearch = array('__CONTACTCIVILITY__', '__CONTACTNAME__', '__CONTACTFIRSTNAME__', '__CONTACTADDRESS__');
+		$TReplace = array($object->civility_id, $object->lastname, $object->firstname, $object->address);
+
+		$msg = str_replace($TSearch, $TReplace, $conf->global->ALERTMAILSMS_MSG_SMS);
+			
+		try
+		{
+			//TODO sélectionner le bon compte
+			$TCompteSms = $this->ovh_api->get('/sms/'); //Array des comptes sms disponibles
+			//if (!$TCompteSms) $TCompteSms = array('PHTEST');
+			
+			//More info : https://api.ovh.com/console/#/sms/{serviceName}/jobs#POST
+			$content = (object) array(
+				'charset'=> 'UTF-8'
+				,'class'=> 'phoneDisplay'
+				,'coding'=> '8bit'
+				,'message'=> $msg
+				,'noStopClause'=> false //Do not display STOP clause in the message, this requires that this is not an advertising message
+				,'priority'=> 'medium'
+				,'receivers'=> array($phone_number) //The receivers list
+				,'sender'=>$conf->global->ALERTMAILSMS_PHONE_NUMBER //The sender
+				,'senderForResponse'=> false //Set the flag to send a special sms which can be reply by the receiver (smsResponse).
+				,'validityPeriod'=> 2880 //The maximum time -in minute(s)- before the message is dropped
+			);
+			
+			$smsSend = $this->ovh_api->post('/sms/'.$TCompteSms[0].'/jobs/', $content);
+		}
+		catch (Exception $e)
+		{
+			if ($e->hasResponse())
+			{
+				$dolibarr_version = versiondolibarrarray();	
+		
+				if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessage($e->getResponse(), 'errors');
+				else setEventMessages($e->getResponse(), array(), 'errors');
+			}
+		}
+		
 	}
+
+	public function formatPhoneNumber($number)
+	{
+		$search = array(' ', '.', ',', '-', '_', '/');
+		$res = str_replace($search, '', $number);
+		
+		// Format français
+		if (!preg_match('/^\+33[1-9]{1}[0-9]{8}$/', $res))
+		{
+			if ($res[0] == 0) $res = substr($res, 1);
+			
+			$res = '+33'.$res;
+		}
+		
+		return $res;
+	} 
 	
 	public function send(&$object, &$conf, $forceMail = false, $forceSms = false)
 	{
@@ -120,16 +170,15 @@ class TAlertMailSms extends TObjetStd
 	
 	public function testGetOVH($apiKey, $secretKey, $consumerKey)
 	{
-		
-		$ovh = new Api( 
+		$ovh = new OvhApi( 
 			$apiKey,
             $secretKey,
             'ovh-eu',
             $consumerKey
 		);
 		
-		$a = $ovh->get('/me');
-		var_dump($a);
+		$a = $ovh->get('/sms/');
+		return $a;
 	}
 }
 
@@ -178,5 +227,4 @@ class TContact extends Contact
 		return $this->db->query($sql);
 	}
 }
-
 

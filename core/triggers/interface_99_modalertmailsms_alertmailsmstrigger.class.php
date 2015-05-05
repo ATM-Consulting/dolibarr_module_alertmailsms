@@ -192,8 +192,8 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 	{
 		$dolibarr_version = versiondolibarrarray();	
 		
-		if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessages('', $TAlertMailSms->errors, 'errors');
-		else setEventMessage($TAlertMailSms->errors, 'errors');
+		if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessage($TAlertMailSms->errors, 'errors');
+		else setEventMessages('', $TAlertMailSms->errors, 'errors');
 	}
 	
 }

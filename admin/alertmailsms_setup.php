@@ -23,10 +23,11 @@
  * 				Put some comments here
  */
 // Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
+require_once '../config.php';
+/*$res = @include("../../main.inc.php"); // From htdocs directory
 if (! $res) {
     $res = @include("../../../main.inc.php"); // From "custom" directory
-}
+}*/
 
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
@@ -181,8 +182,8 @@ print '<td align="right" width="500">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_ALERTMAILSMS_PHONE_NUMBER">';
-print '<input type="text" name="ALERTMAILSMS_PHONE_NUMBER" size="55" value="'.$conf->global->ALERTMAILSMS_PHONE_NUMBER.'">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print $form->textwithpicto('<input type="text" name="ALERTMAILSMS_PHONE_NUMBER" size="54" value="'.$conf->global->ALERTMAILSMS_PHONE_NUMBER.'"><input type="submit" class="button" value="'.$langs->trans("Modify").'">', $langs->trans('AlertMailSms_Info_Phone_Number'), -1);
+print '';
 print '</form>';
 print '</td></tr>';
 
@@ -206,7 +207,7 @@ print '</table>';
 $var = false;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("OVH").'</td>'."\n";
+print '<td>'.$form->textwithpicto($langs->trans("OVH"), $langs->trans('OVH_info_required')).'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 

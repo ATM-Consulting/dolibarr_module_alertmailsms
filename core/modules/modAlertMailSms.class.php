@@ -138,7 +138,7 @@ class modAlertMailSms extends DolibarrModules
 		// Minimum version of PHP required by module
 		$this->phpmin = array(5, 3);
 		// Minimum version of Dolibarr required by module
-		$this->need_dolibarr_version = array(3, 7);
+		$this->need_dolibarr_version = array(3, 6);
 		// Language files list (langfiles@mymodule)
 		$this->langfiles = array("alertmailsms@alertmailsms");
 		// Constants

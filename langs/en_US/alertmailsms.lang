@@ -14,6 +14,7 @@ AlertMailSmsSubjectMail=Mail subject
 AlertMailSmsCoreMsgMail=Mail content
 AlertMailSms_Info_Mail=To customize the mail sending you can use overrides values:<br /><b>__CONTACTCIVILITY__</b> : Contact civility<br /><b>__CONTACTNAME__</b> : Contact lastname<br /><b>__CONTACTFIRSTNAME__</b> : Contact firstname<br /><b>__CONTACTADDRESS__</b> : Contact address
 AlertMailSmsPhoneNum=Phone number use to send SMS
+AlertMailSms_Info_Phone_Number=Thank you to fill a number beginning with +33.<br />Example : <b>+33600000000</b>
 AlertMailSmsCoreMsgSms=SMS content
 AlertMailSms_Info_Sms=To customize the SMS sending you can use overrides values:<br /><b>__CONTACTCIVILITY__</b> : Contact civility<br /><b>__CONTACTNAME__</b> : Contact lastname<br /><b>__CONTACTFIRSTNAME__</b> : Contact firstname<br /><b>__CONTACTADDRESS__</b> : Contact address
 
@@ -25,7 +26,7 @@ AlertMailSmsTabContact=Contacts/Address - Mail/Sms Alert
 AlertMailSms_Mail=Mail alert
 AlertMailSms_Sms=SMS alert
 
-
+OVH_info_required=When creating your keys, the necessary rights are:<br />GET: /sms/<br />GET: /sms/*/jobs/<br />POST: /sms/*/jobs/
 AlertMailSmsOvhApiKey=Application Key
 AlertMailSmsOvhSecret=Application Secret
 AlertMailSmsOvhConsumerKey=Consumer Key

@@ -14,6 +14,7 @@ AlertMailSmsSubjectMail=Sujet du mail
 AlertMailSmsCoreMsgMail=Contenu du mail
 AlertMailSms_Info_Mail=Afin de personnaliser l'envoi de mail vous pouvez utiliser des valeurs de remplacements :<br /><b>__CONTACTCIVILITY__</b> : Civilité du contact<br /><b>__CONTACTNAME__</b> : Nom du contact<br /><b>__CONTACTFIRSTNAME__</b> : Prénom du contact<br /><b>__CONTACTADDRESS__</b> : Adresse du contact
 AlertMailSmsPhoneNum=Numéro de téléphone utiliser pour l'envoi
+AlertMailSms_Info_Phone_Number=Merci de renseigner un numéro commençant par +33.<br />Exemple : <b>+33600000000</b>
 AlertMailSmsCoreMsgSms=Contenu du SMS
 AlertMailSms_Info_Sms=Afin de personnaliser l'envoi du sms vous pouvez utiliser des valeurs de remplacements :<br /><b>__CONTACTCIVILITY__</b> : Civilité du contact<br /><b>__CONTACTNAME__</b> : Nom du contact<br /><b>__CONTACTFIRSTNAME__</b> : Prénom du contact<br /><b>__CONTACTADDRESS__</b> : Adresse du contact
 
@@ -25,7 +26,7 @@ AlertMailSmsTabContact=Contacts/Adresses - Alerte Mail/Sms
 AlertMailSms_Mail=Alerte mail
 AlertMailSms_Sms=Alerte SMS
 
-
+OVH_info_required=Lors de la création de vos clés, les droits nécessaires sont :<br />GET : /sms/<br />GET : /sms/*/jobs/<br />POST : /sms/*/jobs/
 AlertMailSmsOvhApiKey=Clé API
 AlertMailSmsOvhSecret=Clé secrète
 AlertMailSmsOvhConsumerKey=Clé de consommation
