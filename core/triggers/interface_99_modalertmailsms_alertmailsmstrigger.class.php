@@ -170,7 +170,7 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 					$TContact->fetch($id);
 					$TContact->getAlertAttributes();
 					
-					$TAlertMailSms->send($TContact, $conf);
+					$TAlertMailSms->send($TContact, $conf, $langs);
 				}
 				
 				if (count($TAlertMailSms->errors) > 0) 

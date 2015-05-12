@@ -3,27 +3,24 @@
 class TAlertMailSms extends TObjetStd
 {
 	var $platform;
-	var $send;
 	var $errors;
 	var $ovh_api;
+	var $TSearch;
+	var $TReplace;
+	var $dolibarr_version;
 	
 	public function __construct()
 	{
 		global $conf, $langs;
 
 		$this->platform = $conf->global->ALERTMAILSMS_PLATFORM;
-		$this->send = false;
 		$this->errors = array();
+		$this->TSearch = array();
+		$this->TReplace = array();
 		
 		$this->dolibarr_version = versiondolibarrarray();
 		
 		$this->_includeClass($conf, $langs);
-	}
-	
-	public function resetVar()
-	{
-		$this->send = false;
-		$this->errors = array();
 	}
 
 	public function save()
@@ -78,33 +75,31 @@ class TAlertMailSms extends TObjetStd
 		return $res;
 	}
 	
-	private function _sendMail(&$object, &$conf)
+	private function _sendMail(&$object, &$conf, &$langs)
 	{
 		// ^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$
 		// $object->email;
 		
 		if (empty($object->email)) return false;
-		
-		$TSearch = array('__CONTACTCIVILITY__', '__CONTACTNAME__', '__CONTACTFIRSTNAME__', '__CONTACTADDRESS__');
-		$TReplace = array($object->civility_id, $object->lastname, $object->firstname, $object->address);
 
-		$msg = str_replace($TSearch, $TReplace, $conf->global->ALERTMAILSMS_MSG_MAIL);
+		$msg = str_replace($this->TSearch, $this->TReplace, $conf->global->ALERTMAILSMS_MSG_MAIL);
 
 		// Construct mail
-		$CMail = new CMailFile(	$conf->global->ALERTMAILSMS_SUBJECT_MAIL
-								,$object->email
-								,$conf->global->MAIN_MAIL_EMAIL_FROM
-								,$msg
-								/*,$filename_list=array()
-								,$mimetype_list=array()
-								,$mimefilename_list=array()
-								,$addr_cc=""
-								,$addr_bcc=""
-								,$deliveryreceipt=0
-								,$msgishtml=0
-								,$errors_to=''
-								,$css=''*/
-							);
+		$CMail = new CMailFile(	
+			$conf->global->ALERTMAILSMS_SUBJECT_MAIL
+			,$object->email
+			,$conf->global->MAIN_MAIL_EMAIL_FROM
+			,$msg
+			/*,$filename_list=array()
+			,$mimetype_list=array()
+			,$mimefilename_list=array()
+			,$addr_cc=""
+			,$addr_bcc=""
+			,$deliveryreceipt=0
+			,$msgishtml=0
+			,$errors_to=''
+			,$css=''*/
+		);
 		
 		// Send mail
 		$CMail->sendfile();
@@ -112,38 +107,39 @@ class TAlertMailSms extends TObjetStd
 		if ($CMail->error) $this->errors[] = $CMail->error;
 	}
 	
-	private function _sendSms(&$object, &$conf)
+	private function _sendSms(&$object, &$conf, &$langs)
 	{
-		if ($this->platform == 'OVH' && $this->ovh_api === null)
+		switch ($this->platform) {
+			case 'OVH':
+				$this->_sendOvhSms($object, $conf, $langs);
+				break;
+			
+			default:
+				$this->errors[] = $langs->trans("ALERTMAILSMS_ERR_NO_PLATFORM");
+				break;
+		}
+	}
+
+	private function _sendOvhSms(&$object, &$conf, &$langs)
+	{
+		if ($this->ovh_api === null)
 		{
 			if ($this->dolibarr_version[0] < 3 || ($this->dolibarr_version[0] == 3 && $this->dolibarr_version[1] < 7)) setEventMessage($e->getResponse(), 'errors');
 			else setEventMessages($e->getResponse(), array(), 'errors');
+			
+			return;
 		}
 		
 		$phone_number = $this->formatPhoneNumber($object->phone_pro);
 		
-		$TSearch = array('__CONTACTCIVILITY__', '__CONTACTNAME__', '__CONTACTFIRSTNAME__', '__CONTACTADDRESS__');
-		$TReplace = array($object->civility_id, $object->lastname, $object->firstname, $object->address);
+		$msg = str_replace($this->TSearch, $this->TReplace, $conf->global->ALERTMAILSMS_MSG_SMS);
 		
-		/*
-		$TSearch = array();
-		$TReplace = array();
-		
-		foreach ($object as $key => $value) {
-		 	$TSearch[] = '__CONTACT_'.strtoupper($key).'__';
-			$TReplace[] = $value;
-		}
-		*/
-
-
-		$msg = str_replace($TSearch, $TReplace, $conf->global->ALERTMAILSMS_MSG_SMS);
-			
 		try
 		{
-			//TODO à généralisé si on souhaite utiliser plusieurs Api
-			//sélectionner le bon compte
 			$TCompteSms = $this->ovh_api->get('/sms/'); //Array des comptes sms disponibles
-			//if (!$TCompteSms) $TCompteSms = array('PHTEST');
+			
+			$useCompteTest = __get('useCompteTest', ''); //Var de test
+			if (!empty($useCompteTest)) $TCompteSms = array($useCompteTest);
 			
 			//More info : https://api.ovh.com/console/#/sms/{serviceName}/jobs#POST
 			$content = (object) array(
@@ -154,7 +150,7 @@ class TAlertMailSms extends TObjetStd
 				,'noStopClause'=> false //Do not display STOP clause in the message, this requires that this is not an advertising message
 				,'priority'=> 'medium'
 				,'receivers'=> array($phone_number) //The receivers list
-				,'sender'=>$conf->global->ALERTMAILSMS_PHONE_NUMBER //The sender
+				,'sender'=>$conf->global->ALERTMAILSMS_PHONE_NUMBER //The sender (num or string sould be ok)
 				,'senderForResponse'=> false //Set the flag to send a special sms which can be reply by the receiver (smsResponse).
 				,'validityPeriod'=> 2880 //The maximum time -in minute(s)- before the message is dropped
 			);
@@ -169,7 +165,6 @@ class TAlertMailSms extends TObjetStd
 				else setEventMessages($e->getResponse(), array(), 'errors');
 			}
 		}
-		
 	}
 
 	public function formatPhoneNumber($number)
@@ -188,11 +183,19 @@ class TAlertMailSms extends TObjetStd
 		return $res;
 	} 
 	
-	public function send(&$object, &$conf, $forceMail = false, $forceSms = false)
+	public function send(&$object, &$conf, &$langs, $forceMail = false, $forceSms = false)
 	{
-		if ($object->alert_mail || $forceMail) $this->_sendMail($object, $conf);
+		if (empty($this->TSearch) && empty($this->TReplace))
+		{
+			foreach ($object as $key => $value) {
+			 	$this->TSearch[] = '__CONTACT_'.strtoupper($key).'__';
+				$this->TReplace[] = $value;
+			}
+		}
 		
-		if ($object->alert_sms || $forceSms) $this->_sendSms($object, $conf);
+		if ($object->alert_mail || $forceMail) $this->_sendMail($object, $conf, $langs);
+		
+		if ($object->alert_sms || $forceSms) $this->_sendSms($object, $conf, $langs);
 	}
 	
 	public function testGetOVH($apiKey, $secretKey, $consumerKey)
