@@ -15,6 +15,8 @@ class TAlertMailSms extends TObjetStd
 		$this->send = false;
 		$this->errors = array();
 		
+		$this->dolibarr_version = versiondolibarrarray();
+		
 		$this->_includeClass($conf, $langs);
 	}
 	
@@ -44,7 +46,16 @@ class TAlertMailSms extends TObjetStd
 		switch ($this->platform) {
 			case 'OVH':
 				dol_include_once('/alertmailsms/loadOVH.php');
-				$this->ovh_api = new OvhApi($conf->global->ALERTMAILSMS_OVH_KEY, $conf->global->ALERTMAILSMS_OVH_SECRET, 'ovh-eu', $conf->global->ALERTMAILSMS_OVH_CONSUMER_KEY);
+				
+				if (empty($conf->global->ALERTMAILSMS_OVH_KEY) || empty($conf->global->ALERTMAILSMS_OVH_SECRET) || empty($conf->global->ALERTMAILSMS_OVH_CONSUMER_KEY))
+				{
+					$this->ovh_api = null;
+				}
+				else
+				{
+					$this->ovh_api = new OvhApi($conf->global->ALERTMAILSMS_OVH_KEY, $conf->global->ALERTMAILSMS_OVH_SECRET, 'ovh-eu', $conf->global->ALERTMAILSMS_OVH_CONSUMER_KEY);
+				}
+				
 				break;
 			
 			default:
@@ -103,6 +114,12 @@ class TAlertMailSms extends TObjetStd
 	
 	private function _sendSms(&$object, &$conf)
 	{
+		if ($this->platform == 'OVH' && $this->ovh_api === null)
+		{
+			if ($this->dolibarr_version[0] < 3 || ($this->dolibarr_version[0] == 3 && $this->dolibarr_version[1] < 7)) setEventMessage($e->getResponse(), 'errors');
+			else setEventMessages($e->getResponse(), array(), 'errors');
+		}
+		
 		$phone_number = $this->formatPhoneNumber($object->phone_pro);
 		
 		$TSearch = array('__CONTACTCIVILITY__', '__CONTACTNAME__', '__CONTACTFIRSTNAME__', '__CONTACTADDRESS__');
@@ -123,7 +140,8 @@ class TAlertMailSms extends TObjetStd
 			
 		try
 		{
-			//TODO sélectionner le bon compte
+			//TODO à généralisé si on souhaite utiliser plusieurs Api
+			//sélectionner le bon compte
 			$TCompteSms = $this->ovh_api->get('/sms/'); //Array des comptes sms disponibles
 			//if (!$TCompteSms) $TCompteSms = array('PHTEST');
 			
@@ -147,9 +165,7 @@ class TAlertMailSms extends TObjetStd
 		{
 			if ($e->hasResponse())
 			{
-				$dolibarr_version = versiondolibarrarray();	
-		
-				if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessage($e->getResponse(), 'errors');
+				if ($this->dolibarr_version[0] < 3 || ($this->dolibarr_version[0] == 3 && $this->dolibarr_version[1] < 7)) setEventMessage($e->getResponse(), 'errors');
 				else setEventMessages($e->getResponse(), array(), 'errors');
 			}
 		}
