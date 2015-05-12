@@ -1,3 +1,0 @@
-[submodule "OVH/vendor/ovh/ovh"]
-	path = OVH/vendor/ovh/ovh
-	url = git@github.com:ovh/php-ovh.git
