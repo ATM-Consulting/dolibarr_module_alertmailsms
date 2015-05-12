@@ -107,6 +107,17 @@ class TAlertMailSms extends TObjetStd
 		
 		$TSearch = array('__CONTACTCIVILITY__', '__CONTACTNAME__', '__CONTACTFIRSTNAME__', '__CONTACTADDRESS__');
 		$TReplace = array($object->civility_id, $object->lastname, $object->firstname, $object->address);
+		
+		/*
+		$TSearch = array();
+		$TReplace = array();
+		
+		foreach ($object as $key => $value) {
+		 	$TSearch[] = '__CONTACT_'.strtoupper($key).'__';
+			$TReplace[] = $value;
+		}
+		*/
+
 
 		$msg = str_replace($TSearch, $TReplace, $conf->global->ALERTMAILSMS_MSG_SMS);
 			
