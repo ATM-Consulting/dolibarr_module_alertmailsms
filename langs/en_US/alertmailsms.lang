@@ -20,6 +20,7 @@ AlertMailSms_Info_Sms=To customize the SMS sending you can use overrides values:
 
 ALERTMAILSMS_TRIGGER_ORDER_VALIDATE=Order validation
 ALERTMAILSMS_TRIGGER_SHIPPING_VALIDATE=Shipping validation
+ALERTMAILSMS_ERR_EMPTY_PHONE=Error : phone number is empty
 
 AlertMailSmsTabName=Mail/SMS Alert
 AlertMailSmsTabContact=Contacts/Address - Mail/Sms Alert

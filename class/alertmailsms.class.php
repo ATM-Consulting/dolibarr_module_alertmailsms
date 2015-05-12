@@ -124,13 +124,21 @@ class TAlertMailSms extends TObjetStd
 	{
 		if ($this->ovh_api === null)
 		{
-			if ($this->dolibarr_version[0] < 3 || ($this->dolibarr_version[0] == 3 && $this->dolibarr_version[1] < 7)) setEventMessage($e->getResponse(), 'errors');
-			else setEventMessages($e->getResponse(), array(), 'errors');
+			if ($this->dolibarr_version[0] < 3 || ($this->dolibarr_version[0] == 3 && $this->dolibarr_version[1] < 7)) setEventMessage($langs->trans("ALERTMAILSMS_ERR_NO_PLATFORM"), 'errors');
+			else setEventMessages($langs->trans("ALERTMAILSMS_ERR_NO_PLATFORM"), array(), 'errors');
 			
 			return;
 		}
 		
 		$phone_number = $this->formatPhoneNumber($object->phone_pro);
+		
+		if ($phone_number === false)
+		{
+			if ($this->dolibarr_version[0] < 3 || ($this->dolibarr_version[0] == 3 && $this->dolibarr_version[1] < 7)) setEventMessage($langs->trans("ALERTMAILSMS_ERR_EMPTY_PHONE"), 'errors');
+			else setEventMessages($langs->trans("ALERTMAILSMS_ERR_EMPTY_PHONE"), array(), 'errors');
+			
+			return;
+		}
 		
 		$msg = str_replace($this->TSearch, $this->TReplace, $conf->global->ALERTMAILSMS_MSG_SMS);
 		
@@ -172,6 +180,8 @@ class TAlertMailSms extends TObjetStd
 		$search = array(' ', '.', ',', '-', '_', '/');
 		$res = str_replace($search, '', $number);
 		
+		if (empty($res)) return false;
+			
 		// Format français
 		if (!preg_match('/^\+33[1-9]{1}[0-9]{8}$/', $res))
 		{

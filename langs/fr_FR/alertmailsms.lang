@@ -20,6 +20,7 @@ AlertMailSms_Info_Sms=Afin de personnaliser l'envoi du sms vous pouvez utiliser 
 
 ALERTMAILSMS_TRIGGER_ORDER_VALIDATE=Validation de la commande
 ALERTMAILSMS_TRIGGER_SHIPPING_VALIDATE=Validation de l'expédition
+ALERTMAILSMS_ERR_EMPTY_PHONE=Erreur : numéro de téléphone vide
 
 AlertMailSmsTabName=Alerte Mail/SMS
 AlertMailSmsTabContact=Contacts/Adresses - Alerte Mail/Sms
