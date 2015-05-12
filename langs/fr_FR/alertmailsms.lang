@@ -12,11 +12,11 @@ AlertMailSmsForStopInfo=Attention si plusieurs contacts sont associés. Une erre
 AlertMailSmsPlatformChoice=Plate-forme utilisée pour l'envoi de SMS
 AlertMailSmsSubjectMail=Sujet du mail
 AlertMailSmsCoreMsgMail=Contenu du mail
-AlertMailSms_Info_Mail=Afin de personnaliser l'envoi de mail vous pouvez utiliser des valeurs de remplacements :<br /><b>__CONTACTCIVILITY__</b> : Civilité du contact<br /><b>__CONTACTNAME__</b> : Nom du contact<br /><b>__CONTACTFIRSTNAME__</b> : Prénom du contact<br /><b>__CONTACTADDRESS__</b> : Adresse du contact
+AlertMailSms_Info_Mail=Afin de personnaliser l'envoi de mail vous pouvez utiliser des valeurs de remplacement.<br />Utilisez le mot clé __CONTACT_XXX__ (XXX = attribut de l'objet contact en majuscule)<br /><br />Exemples :<br /><br /><b>__CONTACT_CIVILITY__</b> : Civilité du contact<br /><b>__CONTACT_LASTNAME__</b> : Nom du contact<br /><b>__CONTACT_FIRSTNAME__</b> : Prénom du contact<br /><b>__CONTACT_ADDRESS__</b> : Adresse du contact
 AlertMailSmsPhoneNum=Numéro de téléphone utiliser pour l'envoi
-AlertMailSms_Info_Phone_Number=Merci de renseigner un numéro commençant par +33.<br />Exemple : <b>+33600000000</b>
+AlertMailSms_Info_Phone_Number=Merci de renseigner un numéro commençant par +33 ou un nom.<br />Exemple : <b>+33600000000</b>
 AlertMailSmsCoreMsgSms=Contenu du SMS
-AlertMailSms_Info_Sms=Afin de personnaliser l'envoi du sms vous pouvez utiliser des valeurs de remplacements :<br /><b>__CONTACTCIVILITY__</b> : Civilité du contact<br /><b>__CONTACTNAME__</b> : Nom du contact<br /><b>__CONTACTFIRSTNAME__</b> : Prénom du contact<br /><b>__CONTACTADDRESS__</b> : Adresse du contact
+AlertMailSms_Info_Sms=Afin de personnaliser l'envoi de mail vous pouvez utiliser des valeurs de remplacement.<br />Utilisez le mot clé __CONTACT_XXX__ (XXX = attribut de l'objet contact en majuscule)<br /><br />Exemples :<br /><br /><b>__CONTACT_CIVILITY__</b> : Civilité du contact<br /><b>__CONTACT_LASTNAME__</b> : Nom du contact<br /><b>__CONTACT_FIRSTNAME__</b> : Prénom du contact<br /><b>__CONTACT_ADDRESS__</b> : Adresse du contact
 
 ALERTMAILSMS_TRIGGER_ORDER_VALIDATE=Validation de la commande
 ALERTMAILSMS_TRIGGER_SHIPPING_VALIDATE=Validation de l'expédition
