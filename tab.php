@@ -81,6 +81,10 @@ if ($action == 'edit')
     // Name
     print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
+	
+	// Mail/Phone
+    print '<tr><td width="20%">'.$langs->trans("Email").'</td><td width="30%">'.$object->email.'</td>';
+    print '<td width="20%">'.$langs->trans("PhonePro").'</td><td width="30%">'.dol_escape_htmltag($object->phone_pro).'</td></tr>';
 
 	// Alert inputs
 	print '<tr><td width="20%">'.$langs->trans("AlertMailSms_Mail").'</td><td width="30%">'.$form->selectyesno('alert_mail', $object->alert_mail, 1).'</td>';
