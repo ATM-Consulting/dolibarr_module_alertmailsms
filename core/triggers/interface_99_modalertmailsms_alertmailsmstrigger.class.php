@@ -156,11 +156,23 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
             dol_include_once('/alertmailsms/config.php');
 			dol_include_once('/alertmailsms/class/alertmailsms.class.php');
 			
-			// TODO $object->liste_contact(-1, 'internal', 1) pour récupérer la liste des contacts interne (llx_user)
+			// TODO $object->liste_contact(-1, 'internal', 1) pour récupérer la liste des contacts interne (llx_user) à mettre en conf si l'utilisateur veut faire un choix
 			// llx_user devra aussi implémenter les champs alert_mail et alert_sms
 			
+			if ($object->element == 'shipping' && $object->origin_id > 0)
+			{
+				$obj = new Commande($db);
+				$obj->fetch($object->origin_id);
+			}
+			else 
+			{
+				$obj = &$object;		
+			}
+			
 			// Array of id contacts (llx_socpeople)
-			$TIdContact = $object->liste_contact(-1, 'external', 1);
+			$TIdContact = $obj->liste_contact(-1, 'external', 1);
+			$TIdContact = array_unique($TIdContact);
+			
 			if (count($TIdContact) > 0)
 			{
 				$TAlertMailSms = new TAlertMailSms;
@@ -178,6 +190,10 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 					$this->_showError($TAlertMailSms);
 					if (!empty($conf->global->ALERTMAILSMS_STOP_ON_ERR)) return -1; // Dot not validate object
 				}
+				else 
+				{
+					$this->_showOK($langs, count($TIdContact));	
+				}
 			}
 			
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
@@ -186,6 +202,16 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 		}
 		
 		return 0;
+	}
+
+	private function _showOK(&$langs, $nb)
+	{
+		$langs->load('alertmailsms@alertmailsms');
+		
+		$dolibarr_version = versiondolibarrarray();	
+		
+		if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessage($langs->trans('AlertMailSms_Validate_Object', $nb));
+		else setEventMessages('', $langs->trans('AlertMailSms_Validate_Object', $nb));
 	}
 
 	private function _showError(&$TAlertMailSms)

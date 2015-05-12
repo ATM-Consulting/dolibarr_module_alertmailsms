@@ -34,3 +34,5 @@ AlertMailSmsOvhConsumerKey=Clé de consommation
 
 
 ALERTMAILSMS_ERR_NO_PLATFORM=Erreur : plate-forme sélectionné inconnue ou non valide
+
+AlertMailSms_Validate_Object=%d contact(s) traité(s)

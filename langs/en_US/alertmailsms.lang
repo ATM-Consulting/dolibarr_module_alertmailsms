@@ -34,3 +34,5 @@ AlertMailSmsOvhConsumerKey=Consumer Key
 
 
 ALERTMAILSMS_ERR_NO_PLATFORM=Error: unknown or invalid selected platform
+
+AlertMailSms_Validate_Object=%d contact(s) processed
