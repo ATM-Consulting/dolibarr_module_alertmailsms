@@ -194,7 +194,7 @@ class TAlertMailSms extends TObjetStd
 				,'receivers'=> array($phone_number) //The receivers list
 				,'sender'=>$conf->global->ALERTMAILSMS_SENDER //The sender (num or string sould be ok)
 				,'senderForResponse'=> false //Set the flag to send a special sms which can be reply by the receiver (smsResponse).
-				,'validityPeriod'=> 15//2880 //The maximum time -in minute(s)- before the message is dropped
+				,'validityPeriod'=> 2880//2880 //The maximum time -in minute(s)- before the message is dropped
 			);
 			
 			$smsSend = $this->ovh_api->post('/sms/'.$conf->global->ALERTMAILSMS_COMPTE_SMS_OVH.'/jobs/', $content);
