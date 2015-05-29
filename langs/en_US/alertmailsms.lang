@@ -29,6 +29,7 @@ AlertMailSmsTabContact=Contacts/Address - Mail/Sms Alert
 AlertMailSms_Mail=Mail alert
 AlertMailSms_Sms=SMS alert
 
+OVH=<a href="https://eu.api.ovh.com/createToken/" target="_blank">OVH</a>
 OVH_info_required=When creating your keys, the necessary rights are:<br /><b>GET: /sms/</b> (get list of SMS account)<br /><b>GET: /sms/*/</b> (get informations from SMS account)<br /><b>POST: /sms/*/jobs/</b> (allow SMS sending)
 AlertMailSmsOvhApiKey=Application Key
 AlertMailSmsOvhSecret=Application Secret
