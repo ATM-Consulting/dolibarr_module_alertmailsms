@@ -15,10 +15,10 @@ AlertMailSmsPlatformChoice=Plate-forme utilisée pour l'envoi de SMS
 AlertMailSmsSubjectMail=Sujet du mail
 AlertMailSmsCoreMsgMail=Contenu du mail
 AlertMailSms_Info_Mail=Afin de personnaliser l'envoi de mail vous pouvez utiliser des valeurs de remplacement.<br />Utilisez le mot clé __CONTACT_XXX__ (XXX = attribut de l'objet contact en majuscule)<br /><br />Exemples :<br /><br /><b>__CONTACT_CIVILITY__</b> : Civilité du contact<br /><b>__CONTACT_LASTNAME__</b> : Nom du contact<br /><b>__CONTACT_FIRSTNAME__</b> : Prénom du contact<br /><b>__CONTACT_ADDRESS__</b> : Adresse du contact
-AlertMailSmsPhoneNum=Numéro de téléphone utiliser pour l'envoi
-AlertMailSms_Info_Phone_Number=Merci de renseigner un numéro commençant par +33 ou un nom (OVH nécessite que l'envoyeur soit créé sur le compte).<br />Exemple : <b>+33600000000</b>
+AlertMailSmsPhoneNum=Numéro de téléphone ou nom à utiliser pour l'envoi
+AlertMailSms_Info_Phone_Number=L'expéditeur doit être créé et validé sur <b>OVH</b>
 AlertMailSmsCoreMsgSms=Contenu du SMS
-AlertMailSms_Info_Sms=Afin de personnaliser l'envoi de mail vous pouvez utiliser des valeurs de remplacement.<br />Utilisez le mot clé __CONTACT_XXX__ (XXX = attribut de l'objet contact en majuscule)<br /><br />Exemples :<br /><br /><b>__CONTACT_CIVILITY__</b> : Civilité du contact<br /><b>__CONTACT_LASTNAME__</b> : Nom du contact<br /><b>__CONTACT_FIRSTNAME__</b> : Prénom du contact<br /><b>__CONTACT_ADDRESS__</b> : Adresse du contact
+AlertMailSms_Info_Sms=Afin de personnaliser l'envoi de SMS vous pouvez utiliser des valeurs de remplacement.<br />Utilisez le mot clé __CONTACT_XXX__ (XXX = attribut de l'objet contact en majuscule)<br /><br />Exemples :<br /><br /><b>__CONTACT_CIVILITY__</b> : Civilité du contact<br /><b>__CONTACT_LASTNAME__</b> : Nom du contact<br /><b>__CONTACT_FIRSTNAME__</b> : Prénom du contact<br /><b>__CONTACT_ADDRESS__</b> : Adresse du contact<br /><br /><b>Info OVH</b> : 1 SMS correspond à 160 caractères non utf-8
 
 ALERTMAILSMS_TRIGGER_ORDER_VALIDATE=Validation de la commande
 ALERTMAILSMS_TRIGGER_SHIPPING_VALIDATE=Validation de l'expédition
