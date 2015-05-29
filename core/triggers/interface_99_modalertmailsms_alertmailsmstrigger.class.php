@@ -152,12 +152,15 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 		
 		if ($action == $actionTrigger) 
 		{
+/************/
+			$debug = 1;
+/************/						
             if(!defined('INC_FROM_DOLIBARR')) define('INC_FROM_DOLIBARR',true);
+			
+			dol_include_once('/contact/class/contact.class.php');
             dol_include_once('/alertmailsms/config.php');
 			dol_include_once('/alertmailsms/class/alertmailsms.class.php');
 			
-			// TODO $object->liste_contact(-1, 'internal', 1) pour récupérer la liste des contacts interne (llx_user) à mettre en conf si l'utilisateur veut faire un choix
-			// llx_user devra aussi implémenter les champs alert_mail et alert_sms
 			
 			if ($object->element == 'shipping' && $object->origin_id > 0)
 			{
@@ -169,22 +172,28 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 				$obj = &$object;		
 			}
 			
-			// Array of id contacts (llx_socpeople)
-			$TIdContact = $obj->liste_contact(-1, 'external', 1);
-			$TIdContact = array_unique($TIdContact);
+			// TODO $object->liste_contact(-1, 'internal', 0) pour récupérer la liste des contacts interne (llx_user) à mettre en conf si l'utilisateur veut faire un choix
+			// llx_user devra aussi implémenter les champs alert_mail et alert_sms
 			
-			if (count($TIdContact) > 0)
+			// Array of contact's object
+			$TContact = $obj->liste_contact(-1, 'external', 0);
+
+			if (count($TContact) > 0)
 			{
+				$forceMail = ($debug === 1 ? GETPOST('forcemail') : 0);
+				$forceSms = ($debug === 1 ? GETPOST('forcesms') : 0);
+								
 				$TAlertMailSms = new TAlertMailSms;
-				foreach ($TIdContact as $id)
-				{
-					$TContact = new TContact($db);
-					$TContact->fetch($id);
-					$TContact->getAlertAttributes();
-					
-					$TAlertMailSms->send($TContact, $conf, $langs);
-				}
 				
+				foreach ($TContact as $con)
+				{
+					$contact = new Contact($db);
+					$contact->fetch($con['id']);
+					$contact->code_alert = $con['code']; // llx_c_type_contact
+					
+					$TAlertMailSms->send($contact, $conf, $langs, $forceMail, $forceSms);
+				}
+	
 				if (count($TAlertMailSms->errors) > 0) 
 				{
 					$this->_showError($TAlertMailSms);
@@ -192,7 +201,7 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 				}
 				else 
 				{
-					$this->_showOK($langs, count($TIdContact));	
+					$this->_showOK($langs, $TAlertMailSms->creditsUsed);	
 				}
 			}
 			
@@ -204,14 +213,14 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 		return 0;
 	}
 
-	private function _showOK(&$langs, $nb)
+	private function _showOK(&$langs, $creditsUsed)
 	{
 		$langs->load('alertmailsms@alertmailsms');
 		
 		$dolibarr_version = versiondolibarrarray();	
 		
-		if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessage($langs->trans('AlertMailSms_Validate_Object', $nb));
-		else setEventMessages('', $langs->trans('AlertMailSms_Validate_Object', $nb));
+		if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessage($langs->trans('AlertMailSmsCreditsUsed', $creditsUsed));
+		else setEventMessages('', $langs->trans('AlertMailSmsCreditsUsed', $creditsUsed));
 	}
 
 	private function _showError(&$TAlertMailSms)

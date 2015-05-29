@@ -169,7 +169,7 @@ class modAlertMailSms extends DolibarrModules
 		// Array to add new pages in new tabs
 		// 	Example:
 		$this->tabs = array(
-			'contact:+AlertMailSms:AlertMailSmsTabName:alertmailsms@alertmailsms:$user->rights->societe->contact->creer:/alertmailsms/tab.php?id=__ID__',
+			//'contact:+AlertMailSms:AlertMailSmsTabName:alertmailsms@alertmailsms:$user->rights->societe->contact->creer:/alertmailsms/tab.php?id=__ID__',
 			//	// To add a new tab identified by code tabname1
 			//	'objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',
 			//	// To add another new tab identified by code tabname2
@@ -242,8 +242,6 @@ class modAlertMailSms extends DolibarrModules
 	{
 		$sql = array();
 		
-		if (!$this->_alertAttributesExists()) $sql[] = 'ALTER TABLE '.MAIN_DB_PREFIX.'socpeople ADD COLUMN (alert_mail BOOLEAN DEFAULT 0, alert_sms BOOLEAN DEFAULT 0)';
-		
 		return $this->_init($sql, $options);
 	}
 
@@ -260,30 +258,6 @@ class modAlertMailSms extends DolibarrModules
 		$sql = array();
 
 		return $this->_remove($sql, $options);
-	}
-	
-	private function _alertAttributesExists()
-	{
-		global $db;
-		
-		$alert_attributes_exists = false;
-		
-		$sql = 'SHOW COLUMNS FROM '.MAIN_DB_PREFIX.'socpeople';
-		$resql = $db->query($sql);
-		
-		if ($resql)
-		{
-			while ($def = $db->fetch_array($resql))
-			{
-				if ($def['Field'] == 'alert_mail' || $def['Field'] == 'alert_sms')
-				{
-					$alert_attributes_exists = true;
-					break;
-				}
-			}
-		}
-		
-		return $alert_attributes_exists;
 	}
 
 }

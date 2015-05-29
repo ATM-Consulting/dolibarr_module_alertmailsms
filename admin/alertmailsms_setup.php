@@ -24,14 +24,11 @@
  */
 // Dolibarr environment
 require_once '../config.php';
-/*$res = @include("../../main.inc.php"); // From htdocs directory
-if (! $res) {
-    $res = @include("../../../main.inc.php"); // From "custom" directory
-}*/
 
 // Libraries
-require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
-require_once '../lib/alertmailsms.lib.php';
+dol_include_once('/core/lib/admin.lib.php');
+dol_include_once('/alertmailsms/class/alertmailsms.class.php');
+dol_include_once('/alertmailsms/lib/alertmailsms.lib.php');
 
 // Translations
 $langs->load("alertmailsms@alertmailsms");
@@ -123,6 +120,35 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print '</form>';
 print '</td></tr>';
 
+$TCTypeContact = getCTypeContact($db);
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AlertMailSmsCTypeMail").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_CTYPE_MAIL">';
+print $form->selectarray('ALERTMAILSMS_CTYPE_MAIL', $TCTypeContact, $conf->global->ALERTMAILSMS_CTYPE_MAIL);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AlertMailSmsCTypeSms").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_CTYPE_SMS">';
+print $form->selectarray('ALERTMAILSMS_CTYPE_SMS', $TCTypeContact, $conf->global->ALERTMAILSMS_CTYPE_SMS);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$form->textwithpicto($langs->trans('AlertMailSmsForceStop'), $langs->trans('AlertMailSmsForStopInfo')).'</td>';
@@ -181,8 +207,8 @@ print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="500">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_ALERTMAILSMS_PHONE_NUMBER">';
-print $form->textwithpicto('<input type="text" name="ALERTMAILSMS_PHONE_NUMBER" size="54" value="'.$conf->global->ALERTMAILSMS_PHONE_NUMBER.'"><input type="submit" class="button" value="'.$langs->trans("Modify").'">', $langs->trans('AlertMailSms_Info_Phone_Number'), -1);
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_SENDER">';
+print $form->textwithpicto('<input type="text" name="ALERTMAILSMS_SENDER" size="54" value="'.$conf->global->ALERTMAILSMS_SENDER.'"><input type="submit" class="button" value="'.$langs->trans("Modify").'">', $langs->trans('AlertMailSms_Info_Phone_Number'), -1);
 print '';
 print '</form>';
 print '</td></tr>';
@@ -200,7 +226,6 @@ print '</form>';
 print '</td></tr>';
 
 print '</table>';
-
 
 
 //OVH
@@ -248,6 +273,29 @@ print '<input type="hidden" name="action" value="set_ALERTMAILSMS_OVH_CONSUMER_K
 print '<input type="text" name="ALERTMAILSMS_OVH_CONSUMER_KEY" size="55" value="'.$conf->global->ALERTMAILSMS_OVH_CONSUMER_KEY.'">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
+print '</td></tr>';
+
+$TInfo = getInfoAccountOvh();
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AlertMailSmsCompteSmsOvh").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_COMPTE_SMS_OVH">';
+print $form->selectarray('ALERTMAILSMS_COMPTE_SMS_OVH', $TInfo[0], $conf->global->ALERTMAILSMS_COMPTE_SMS_OVH);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AlertMailSmsOvhCredtsLeft").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print $langs->trans('AlertMailSmsOvhCredtsLeftValue', $TInfo[1]);
 print '</td></tr>';
 
 print '</table>';

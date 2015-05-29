@@ -7,6 +7,7 @@ class TAlertMailSms extends TObjetStd
 	var $ovh_api;
 	var $TSearch;
 	var $TReplace;
+	var $creditsUsed;
 	var $dolibarr_version;
 	
 	public function __construct()
@@ -17,6 +18,7 @@ class TAlertMailSms extends TObjetStd
 		$this->errors = array();
 		$this->TSearch = array();
 		$this->TReplace = array();
+		$this->creditsUsed = 0;
 		
 		$this->dolibarr_version = versiondolibarrarray();
 		
@@ -61,33 +63,71 @@ class TAlertMailSms extends TObjetStd
 		}
 	}
 	
-	public function getAlert(&$PDOdb, $Tfk_socpeople)
+	public function getComptesSmsOvh()
 	{
-		$res = array();
-		$sql = 'SELECT rowid, alert_mail, alert_sms FROM '.MAIN_DB_PREFIX.'socpeople WHERE rowid IN ('.implode(',', $Tfk_socpeople).')';
+		global $langs;
 		
-		$PDOdb->Execute($sql);
-		while ($line = $PDOdb->Get_line()) 
+		try
 		{
-			$res[] = $line;
+			$TCompte = $this->ovh_api->get('/sms/');
+			return $TCompte;
+		}
+		catch (Exception $e)
+		{
+			if ($e->hasResponse())
+			{
+				$rep = $e->getResponse();
+				if (is_object($rep))
+				{
+					$rep = $langs->trans('AlertMailSmsErrorOccuredFromOvh');
+				}
+				
+				if ($this->dolibarr_version[0] < 3 || ($this->dolibarr_version[0] == 3 && $this->dolibarr_version[1] < 7)) setEventMessage($rep, 'errors');
+				else setEventMessages($rep, array(), 'errors');
+			}
+			
+			return false;
 		}
 		
-		return $res;
 	}
 	
-	private function _sendMail(&$object, &$conf, &$langs)
+	public function getCreditsLeft()
 	{
-		// ^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$
-		// $object->email;
+		global $langs,$conf;
 		
-		if (empty($object->email)) return false;
+		try
+		{
+			$info = $this->ovh_api->get('/sms/'.$conf->global->ALERTMAILSMS_COMPTE_SMS_OVH.'/');
+			return $info['creditsLeft'];
+		}
+		catch (Exception $e)
+		{
+			if ($e->hasResponse())
+			{
+				$rep = $e->getResponse();
+				if (is_object($rep))
+				{
+					$rep = $langs->trans('AlertMailSmsErrorOccuredFromOvh');
+				}
+				
+				if ($this->dolibarr_version[0] < 3 || ($this->dolibarr_version[0] == 3 && $this->dolibarr_version[1] < 7)) setEventMessage($rep, 'errors');
+				else setEventMessages($rep, array(), 'errors');
+			}
+			
+			return false;
+		}
+	}
+	
+	private function _sendMail(&$contact, &$conf, &$langs)
+	{		
+		if (empty($contact->email)) return false;
 
 		$msg = str_replace($this->TSearch, $this->TReplace, $conf->global->ALERTMAILSMS_MSG_MAIL);
 
 		// Construct mail
 		$CMail = new CMailFile(	
 			$conf->global->ALERTMAILSMS_SUBJECT_MAIL
-			,$object->email
+			,$contact->email
 			,$conf->global->MAIN_MAIL_EMAIL_FROM
 			,$msg
 			/*,$filename_list=array()
@@ -107,11 +147,11 @@ class TAlertMailSms extends TObjetStd
 		if ($CMail->error) $this->errors[] = $CMail->error;
 	}
 	
-	private function _sendSms(&$object, &$conf, &$langs)
+	private function _sendSms(&$contact, &$conf, &$langs)
 	{
 		switch ($this->platform) {
 			case 'OVH':
-				$this->_sendOvhSms($object, $conf, $langs);
+				$this->_sendOvhSms($contact, $conf, $langs);
 				break;
 			
 			default:
@@ -120,7 +160,7 @@ class TAlertMailSms extends TObjetStd
 		}
 	}
 
-	private function _sendOvhSms(&$object, &$conf, &$langs)
+	private function _sendOvhSms(&$contact, &$conf, &$langs)
 	{
 		if ($this->ovh_api === null)
 		{
@@ -129,9 +169,8 @@ class TAlertMailSms extends TObjetStd
 			
 			return;
 		}
-		
-		$phone_number = $this->formatPhoneNumber($object->phone_pro);
-		
+	
+		$phone_number = $this->formatPhoneNumber($contact->phone_pro);
 		if ($phone_number === false)
 		{
 			if ($this->dolibarr_version[0] < 3 || ($this->dolibarr_version[0] == 3 && $this->dolibarr_version[1] < 7)) setEventMessage($langs->trans("ALERTMAILSMS_ERR_EMPTY_PHONE"), 'errors');
@@ -144,41 +183,45 @@ class TAlertMailSms extends TObjetStd
 		
 		try
 		{
-			$TCompteSms = $this->ovh_api->get('/sms/'); //Array des comptes sms disponibles
-			
-			$useCompteTest = __get('useCompteTest', ''); //Var de test
-			if (!empty($useCompteTest)) $TCompteSms = array($useCompteTest);
-			
 			//More info : https://api.ovh.com/console/#/sms/{serviceName}/jobs#POST
 			$content = (object) array(
 				'charset'=> 'UTF-8'
 				,'class'=> 'phoneDisplay'
 				,'coding'=> '8bit'
 				,'message'=> $msg
-				,'noStopClause'=> false //Do not display STOP clause in the message, this requires that this is not an advertising message
+				,'noStopClause'=> true //Do not display STOP clause in the message, this requires that this is not an advertising message
 				,'priority'=> 'medium'
 				,'receivers'=> array($phone_number) //The receivers list
-				,'sender'=>$conf->global->ALERTMAILSMS_PHONE_NUMBER //The sender (num or string sould be ok)
+				,'sender'=>$conf->global->ALERTMAILSMS_SENDER //The sender (num or string sould be ok)
 				,'senderForResponse'=> false //Set the flag to send a special sms which can be reply by the receiver (smsResponse).
-				,'validityPeriod'=> 2880 //The maximum time -in minute(s)- before the message is dropped
+				,'validityPeriod'=> 15//2880 //The maximum time -in minute(s)- before the message is dropped
 			);
 			
-			$smsSend = $this->ovh_api->post('/sms/'.$TCompteSms[0].'/jobs/', $content);
+			$smsSend = $this->ovh_api->post('/sms/'.$conf->global->ALERTMAILSMS_COMPTE_SMS_OVH.'/jobs/', $content);
+			
+			if (!empty($smsSend['totalCreditsRemoved'])) $this->creditsUsed += $smsSend['totalCreditsRemoved'];
 		}
 		catch (Exception $e)
 		{
 			if ($e->hasResponse())
 			{
-				if ($this->dolibarr_version[0] < 3 || ($this->dolibarr_version[0] == 3 && $this->dolibarr_version[1] < 7)) setEventMessage($e->getResponse(), 'errors');
-				else setEventMessages($e->getResponse(), array(), 'errors');
+				$rep = $e->getResponse();
+				if (is_object($rep))
+				{
+					$rep = $langs->trans('AlertMailSmsErrorOccuredFromOvh');
+				}
+				
+				if ($this->dolibarr_version[0] < 3 || ($this->dolibarr_version[0] == 3 && $this->dolibarr_version[1] < 7)) setEventMessage($rep, 'errors');
+				else setEventMessages($rep, array(), 'errors');
 			}
 		}
 	}
 
 	public function formatPhoneNumber($number)
 	{
-		$search = array(' ', '.', ',', '-', '_', '/');
-		$res = str_replace($search, '', $number);
+					   
+		$TSearch = array(" ",".","_","-","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+		$res = str_replace($TSearch, '', $number);
 		
 		if (empty($res)) return false;
 			
@@ -193,19 +236,18 @@ class TAlertMailSms extends TObjetStd
 		return $res;
 	} 
 	
-	public function send(&$object, &$conf, &$langs, $forceMail = false, $forceSms = false)
+	public function send(&$contact, &$conf, &$langs, $forceMail = false, $forceSms = false)
 	{
 		if (empty($this->TSearch) && empty($this->TReplace))
 		{
-			foreach ($object as $key => $value) {
+			foreach ($contact as $key => $value) {
 			 	$this->TSearch[] = '__CONTACT_'.strtoupper($key).'__';
 				$this->TReplace[] = $value;
 			}
 		}
 		
-		if ($object->alert_mail || $forceMail) $this->_sendMail($object, $conf, $langs);
-		
-		if ($object->alert_sms || $forceSms) $this->_sendSms($object, $conf, $langs);
+		if ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_MAIL || $forceMail) $this->_sendMail($contact, $conf, $langs);
+		elseif ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_SMS || $forceSms) $this->_sendSms($contact, $conf, $langs);
 	}
 	
 	public function testGetOVH($apiKey, $secretKey, $consumerKey)
@@ -221,50 +263,3 @@ class TAlertMailSms extends TObjetStd
 		return $a;
 	}
 }
-
-include_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
-
-class TContact extends Contact
-{
-	var $alert_mail;
-	var $alert_sms;
-	
-	public function fetch($id, $user=0, $ref_ext='')
-	{
-		$res = parent::fetch($id, $user, $ref_ext);
-		
-		if ($res > 0)
-		{
-			$this->getAlertAttributes();
-		}
-		
-		return $res;
-	}
-	
-	public function getAlertAttributes()
-	{
-		$sql = 'SELECT alert_mail, alert_sms FROM '.MAIN_DB_PREFIX.'socpeople WHERE rowid = '.$this->id;
-		$resql = $this->db->query($sql);
-		
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
-				$obj = $this->db->fetch_object($resql);
-					
-				$this->alert_mail = $obj->alert_mail;
-				$this->alert_sms = $obj->alert_sms;
-			}
-		}
-	}
-	
-	public function setAlertAttributes($alert_mail, $alert_sms)
-	{
-		$this->alert_mail = $alert_mail;
-		$this->alert_sms = $alert_sms;
-		
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'socpeople SET alert_mail = '.$alert_mail.', alert_sms = '.$alert_sms.' WHERE rowid = '.$this->id;
-		return $this->db->query($sql);
-	}
-}
-

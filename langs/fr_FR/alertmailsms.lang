@@ -7,6 +7,8 @@ AlertMailSmsSetup = Configuration du module Alerte Mail/SMS
 AlertMailSmsAbout = A propos du module Alerte Mail/SMS
 
 AlertMailSmsTrigger=Événement sur lequel l'alerte est déclenchée
+AlertMailSmsCTypeMail=Type de contact devant recevoir une notification par mail
+AlertMailSmsCTypeSms=Type de contact devant recevoir une notification par SMS
 AlertMailSmsForceStop=Ne pas valider l'objet si l'événement retourne une erreur
 AlertMailSmsForStopInfo=Attention si plusieurs contacts sont associés. Une erreur sur l'un d'entre eux n'empèchera pas forcement d'envoyer une alerte aux autres contacts.
 AlertMailSmsPlatformChoice=Plate-forme utilisée pour l'envoi de SMS
@@ -14,7 +16,7 @@ AlertMailSmsSubjectMail=Sujet du mail
 AlertMailSmsCoreMsgMail=Contenu du mail
 AlertMailSms_Info_Mail=Afin de personnaliser l'envoi de mail vous pouvez utiliser des valeurs de remplacement.<br />Utilisez le mot clé __CONTACT_XXX__ (XXX = attribut de l'objet contact en majuscule)<br /><br />Exemples :<br /><br /><b>__CONTACT_CIVILITY__</b> : Civilité du contact<br /><b>__CONTACT_LASTNAME__</b> : Nom du contact<br /><b>__CONTACT_FIRSTNAME__</b> : Prénom du contact<br /><b>__CONTACT_ADDRESS__</b> : Adresse du contact
 AlertMailSmsPhoneNum=Numéro de téléphone utiliser pour l'envoi
-AlertMailSms_Info_Phone_Number=Merci de renseigner un numéro commençant par +33 ou un nom.<br />Exemple : <b>+33600000000</b>
+AlertMailSms_Info_Phone_Number=Merci de renseigner un numéro commençant par +33 ou un nom (OVH nécessite que l'envoyeur soit créé sur le compte).<br />Exemple : <b>+33600000000</b>
 AlertMailSmsCoreMsgSms=Contenu du SMS
 AlertMailSms_Info_Sms=Afin de personnaliser l'envoi de mail vous pouvez utiliser des valeurs de remplacement.<br />Utilisez le mot clé __CONTACT_XXX__ (XXX = attribut de l'objet contact en majuscule)<br /><br />Exemples :<br /><br /><b>__CONTACT_CIVILITY__</b> : Civilité du contact<br /><b>__CONTACT_LASTNAME__</b> : Nom du contact<br /><b>__CONTACT_FIRSTNAME__</b> : Prénom du contact<br /><b>__CONTACT_ADDRESS__</b> : Adresse du contact
 
@@ -27,12 +29,15 @@ AlertMailSmsTabContact=Contacts/Adresses - Alerte Mail/Sms
 AlertMailSms_Mail=Alerte mail
 AlertMailSms_Sms=Alerte SMS
 
-OVH_info_required=Lors de la création de vos clés, les droits nécessaires sont :<br />GET : /sms/<br />GET : /sms/*/jobs/<br />POST : /sms/*/jobs/
+OVH_info_required=Lors de la création de vos clés, les droits nécessaires sont :<br /><b>GET : /sms/</b> (récupération de la liste des comptes SMS)<br /><b>GET : /sms/*/</b> (récupération des informations liés au compte)<br /><b>POST : /sms/*/jobs/</b> (permet l'envoi de SMS)
 AlertMailSmsOvhApiKey=Clé API
 AlertMailSmsOvhSecret=Clé secrète
 AlertMailSmsOvhConsumerKey=Clé de consommation
-
+AlertMailSmsCompteSmsOvh=Compte SMS à utiliser pour l'envoi
+AlertMailSmsErrorOccuredFromOvh=Erreur retournée par l'API OVH
+AlertMailSmsOvhCredtsLeft=Crédits restant sur le compte
+AlertMailSmsOvhCredtsLeftValue=%d crédit(s) restant(s)
 
 ALERTMAILSMS_ERR_NO_PLATFORM=Erreur : plate-forme sélectionné inconnue ou non valide
 
-AlertMailSms_Validate_Object=%d contact(s) traité(s)
+AlertMailSmsCreditsUsed=%d crédit(s) utilisé(s)

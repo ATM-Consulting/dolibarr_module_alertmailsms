@@ -7,6 +7,8 @@ AlertMailSmsSetup = Alert Mail/SMS module setup
 AlertMailSmsAbout = About Alert Mail/SMS
 
 AlertMailSmsTrigger=Event on which the alert is triggered
+AlertMailSmsCTypeMail=Type of contact sould be notified by mail
+AlertMailSmsCTypeSms=Type of contact sould be notified by SMS
 AlertMailSmsForceStop=Do not commit the object if the event returns an error
 AlertMailSmsForStopInfo=Be careful if multiple contacts are associated. An error on one of them will not necessarily stop send an alert to other contacts.
 AlertMailSmsPlatformChoice=Platform used to send SMS
@@ -14,7 +16,7 @@ AlertMailSmsSubjectMail=Mail subject
 AlertMailSmsCoreMsgMail=Mail content
 AlertMailSms_Info_Mail=To customize the mail sending you can use overrides values.<br />Use the keyword __CONTACT_XXX__ (XXX = contact object attribute in uppercase)<br /><br />Examples:<br /><br /><b> __CONTACT_CIVILITY__ </b>: Contact civility<br /><b>__CONTACT_LASTNAME__</b>: Contact lastname<br /><b>__CONTACT_FIRSTNAME__</b>: Contact Firstname<br /><b>__CONTACT_ADDRESS__</b>: Contact address
 AlertMailSmsPhoneNum=Phone number use to send SMS
-AlertMailSms_Info_Phone_Number=Thank you to fill a phone number beginning with +33 or a name.<br />Example : <b>+33600000000</b>
+AlertMailSms_Info_Phone_Number=Thank you to fill a phone number beginning with +33 or a name (OVH need this sender is create on the account).<br />Example : <b>+33600000000</b>
 AlertMailSmsCoreMsgSms=SMS content
 AlertMailSms_Info_Sms=To customize the mail sending you can use overrides values.<br />Use the keyword __CONTACT_XXX__ (XXX = contact object attribute in uppercase)<br /><br />Examples:<br /><br /><b> __CONTACT_CIVILITY__ </b>: Contact civility<br /><b>__CONTACT_LASTNAME__</b>: Contact lastname<br /><b>__CONTACT_FIRSTNAME__</b>: Contact Firstname<br /><b>__CONTACT_ADDRESS__</b>: Contact address
 
@@ -27,12 +29,15 @@ AlertMailSmsTabContact=Contacts/Address - Mail/Sms Alert
 AlertMailSms_Mail=Mail alert
 AlertMailSms_Sms=SMS alert
 
-OVH_info_required=When creating your keys, the necessary rights are:<br />GET: /sms/<br />GET: /sms/*/jobs/<br />POST: /sms/*/jobs/
+OVH_info_required=When creating your keys, the necessary rights are:<br /><b>GET: /sms/</b> (get list of SMS account)<br /><b>GET: /sms/*/</b> (get informations from SMS account)<br /><b>POST: /sms/*/jobs/</b> (allow SMS sending)
 AlertMailSmsOvhApiKey=Application Key
 AlertMailSmsOvhSecret=Application Secret
 AlertMailSmsOvhConsumerKey=Consumer Key
-
+AlertMailSmsCompteSmsOvh=SMS account to use to sending
+AlertMailSmsErrorOccuredFromOvh=Error returned API's OVH
+AlertMailSmsOvhCredtsLeft=Credits left on the account
+AlertMailSmsOvhCredtsLeftValue=%d credit(s) left
 
 ALERTMAILSMS_ERR_NO_PLATFORM=Error: unknown or invalid selected platform
 
-AlertMailSms_Validate_Object=%d contact(s) processed
+AlertMailSmsCreditsUsed=%d credit(s) used
