@@ -153,14 +153,13 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 		if ($action == $actionTrigger) 
 		{
 /************/
-			$debug = 1;
+			$debug = GETPOST('DEBUG');
 /************/						
             if(!defined('INC_FROM_DOLIBARR')) define('INC_FROM_DOLIBARR',true);
 			
 			dol_include_once('/contact/class/contact.class.php');
             dol_include_once('/alertmailsms/config.php');
 			dol_include_once('/alertmailsms/class/alertmailsms.class.php');
-			
 			
 			if ($object->element == 'shipping' && $object->origin_id > 0)
 			{
@@ -169,7 +168,7 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 			}
 			else 
 			{
-				$obj = &$object;		
+				$obj = &$object; 
 			}
 			
 			// TODO $object->liste_contact(-1, 'internal', 0) pour récupérer la liste des contacts interne (llx_user) à mettre en conf si l'utilisateur veut faire un choix
@@ -191,7 +190,7 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 					$contact->fetch($con['id']);
 					$contact->code_alert = $con['code']; // llx_c_type_contact
 					
-					$TAlertMailSms->send($contact, $conf, $langs, $forceMail, $forceSms);
+					$TAlertMailSms->send($contact, $conf, $langs, $obj->ref, $forceMail, $forceSms);
 				}
 	
 				if (count($TAlertMailSms->errors) > 0) 

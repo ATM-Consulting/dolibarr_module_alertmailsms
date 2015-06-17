@@ -148,6 +148,18 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print '</form>';
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AlertMailSmsPhoneAttribute").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="500">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_ALERTMAILSMS_PHONE_ATTRIBUTE">';
+print $form->selectarray('ALERTMAILSMS_PHONE_ATTRIBUTE', array('phone_pro' => $langs->trans('AlertMailSmsPhonePro'), 'phone_perso' => $langs->trans('AlertMailSmsPhonePerso'), 'phone_mobile' => $langs->trans('AlertMailSmsPhoneMobile')), $conf->global->ALERTMAILSMS_CTYPE_SMS);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'>';

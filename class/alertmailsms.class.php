@@ -123,7 +123,7 @@ class TAlertMailSms extends TObjetStd
 		if (empty($contact->email)) return false;
 
 		$msg = str_replace($this->TSearch, $this->TReplace, $conf->global->ALERTMAILSMS_MSG_MAIL);
-
+var_dump($msg);exit;
 		// Construct mail
 		$CMail = new CMailFile(	
 			$conf->global->ALERTMAILSMS_SUBJECT_MAIL
@@ -169,8 +169,9 @@ class TAlertMailSms extends TObjetStd
 			
 			return;
 		}
-	
-		$phone_number = $this->formatPhoneNumber($contact->phone_pro);
+		
+		$attribute = $conf->global->ALERTMAILSMS_PHONE_ATTRIBUTE ? $conf->global->ALERTMAILSMS_PHONE_ATTRIBUTE : 'phone_pro';
+		$phone_number = $this->formatPhoneNumber($contact->{$attribute});
 		if ($phone_number === false)
 		{
 			if ($this->dolibarr_version[0] < 3 || ($this->dolibarr_version[0] == 3 && $this->dolibarr_version[1] < 7)) setEventMessage($langs->trans("ALERTMAILSMS_ERR_EMPTY_PHONE"), 'errors');
@@ -218,8 +219,7 @@ class TAlertMailSms extends TObjetStd
 	}
 
 	public function formatPhoneNumber($number)
-	{
-					   
+	{   
 		$TSearch = array(" ",".","_","-","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 		$res = str_replace($TSearch, '', $number);
 		
@@ -236,14 +236,18 @@ class TAlertMailSms extends TObjetStd
 		return $res;
 	} 
 	
-	public function send(&$contact, &$conf, &$langs, $forceMail = false, $forceSms = false)
+	public function send(&$contact, &$conf, &$langs, $facnumber, $forceMail = false, $forceSms = false)
 	{
 		if (empty($this->TSearch) && empty($this->TReplace))
 		{
-			foreach ($contact as $key => $value) {
+			foreach ($contact as $key => $value) 
+			{
 			 	$this->TSearch[] = '__CONTACT_'.strtoupper($key).'__';
 				$this->TReplace[] = $value;
 			}
+			
+			$this->TSearch[] = '__FACNUMBER__';
+			$this->TReplace[] = $facnumber;
 		}
 		
 		if ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_MAIL || $forceMail) $this->_sendMail($contact, $conf, $langs);

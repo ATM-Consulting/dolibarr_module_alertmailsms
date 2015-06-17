@@ -9,16 +9,20 @@ AlertMailSmsAbout = About Alert Mail/SMS
 AlertMailSmsTrigger=Event on which the alert is triggered
 AlertMailSmsCTypeMail=Type of contact sould be notified by mail
 AlertMailSmsCTypeSms=Type of contact sould be notified by SMS
+AlertMailSmsPhoneAttribute=Contact's phone field use to send sms
+AlertMailSmsPhonePro=Prof. phone
+AlertMailSmsPhonePerso=Pers. phone
+AlertMailSmsPhoneMobile=Mobile
 AlertMailSmsForceStop=Do not commit the object if the event returns an error
 AlertMailSmsForStopInfo=Be careful if multiple contacts are associated. An error on one of them will not necessarily stop send an alert to other contacts.
 AlertMailSmsPlatformChoice=Platform used to send SMS
 AlertMailSmsSubjectMail=Mail subject
 AlertMailSmsCoreMsgMail=Mail content
-AlertMailSms_Info_Mail=To customize the mail sending you can use overrides values.<br />Use the keyword __CONTACT_XXX__ (XXX = contact object attribute in uppercase)<br /><br />Examples:<br /><br /><b> __CONTACT_CIVILITY__ </b>: Contact civility<br /><b>__CONTACT_LASTNAME__</b>: Contact lastname<br /><b>__CONTACT_FIRSTNAME__</b>: Contact Firstname<br /><b>__CONTACT_ADDRESS__</b>: Contact address
+AlertMailSms_Info_Mail=To customize the mail sending you can use overrides values.<br />Use the keyword __CONTACT_XXX__ (XXX = contact object attribute in uppercase)<br /><br />Examples:<br /><br /><b> __CONTACT_CIVILITY_ID__ </b>: Contact civility<br /><b>__CONTACT_LASTNAME__</b>: Contact lastname<br /><b>__CONTACT_FIRSTNAME__</b>: Contact Firstname<br /><b>__CONTACT_ADDRESS__</b>: Contact address<br /><b>__FACNUMBER__</b> : Commande number
 AlertMailSmsPhoneNum=Phone number or name used to send SMS
 AlertMailSms_Info_Phone_Number=The expeditor must be created and validated on OVH
 AlertMailSmsCoreMsgSms=SMS content
-AlertMailSms_Info_Sms=To customize the SMS sending you can use overrides values.<br />Use the keyword __CONTACT_XXX__ (XXX = contact object attribute in uppercase)<br /><br />Examples:<br /><br /><b> __CONTACT_CIVILITY__ </b>: Contact civility<br /><b>__CONTACT_LASTNAME__</b>: Contact lastname<br /><b>__CONTACT_FIRSTNAME__</b>: Contact Firstname<br /><b>__CONTACT_ADDRESS__</b>: Contact address<br /><br /><b>Notice OVH</b> : 1 SMS correspond at 160 characters not utf-8
+AlertMailSms_Info_Sms=To customize the SMS sending you can use overrides values.<br />Use the keyword __CONTACT_XXX__ (XXX = contact object attribute in uppercase)<br /><br />Examples:<br /><br /><b> __CONTACT_CIVILITY_ID__ </b>: Contact civility<br /><b>__CONTACT_LASTNAME__</b>: Contact lastname<br /><b>__CONTACT_FIRSTNAME__</b>: Contact Firstname<br /><b>__CONTACT_ADDRESS__</b>: Contact address<br /><b>__FACNUMBER__</b> : Commande number<br /><br /><b>Notice OVH</b> : 1 SMS correspond at 160 characters not utf-8
 
 ALERTMAILSMS_TRIGGER_ORDER_VALIDATE=Order validation
 ALERTMAILSMS_TRIGGER_SHIPPING_VALIDATE=Shipping validation
