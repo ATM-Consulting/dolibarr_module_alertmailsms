@@ -123,7 +123,7 @@ class TAlertMailSms extends TObjetStd
 		if (empty($contact->email)) return false;
 
 		$msg = str_replace($this->TSearch, $this->TReplace, $conf->global->ALERTMAILSMS_MSG_MAIL);
-var_dump($msg);exit;
+
 		// Construct mail
 		$CMail = new CMailFile(	
 			$conf->global->ALERTMAILSMS_SUBJECT_MAIL
@@ -236,7 +236,7 @@ var_dump($msg);exit;
 		return $res;
 	} 
 	
-	public function send(&$contact, &$conf, &$langs, $facnumber, $forceMail = false, $forceSms = false)
+	public function send(&$contact, &$conf, &$langs, $commande, $forceMail = false, $forceSms = false)
 	{
 		if (empty($this->TSearch) && empty($this->TReplace))
 		{
@@ -246,12 +246,15 @@ var_dump($msg);exit;
 				$this->TReplace[] = $value;
 			}
 			
-			$this->TSearch[] = '__FACNUMBER__';
-			$this->TReplace[] = $facnumber;
+			$this->TSearch[] = '__CMDNUMBER__';
+			$this->TReplace[] = $commande->ref;
+			
+			$this->TSearch[] = '__CMDDATE__';
+			$this->TReplace[] = dol_print_date($commande->date_commande, 'daytext');
 		}
 		
-		if ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_MAIL || $forceMail) $this->_sendMail($contact, $conf, $langs);
-		elseif ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_SMS || $forceSms) $this->_sendSms($contact, $conf, $langs);
+		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS) && ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_MAIL || $forceMail)) $this->_sendMail($contact, $conf, $langs);
+		elseif ($conf->global->ALERTMAILSMS_SEND_SMS_ENABLED && ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_SMS || $forceSms)) $this->_sendSms($contact, $conf, $langs);
 	}
 	
 	public function testGetOVH($apiKey, $secretKey, $consumerKey)

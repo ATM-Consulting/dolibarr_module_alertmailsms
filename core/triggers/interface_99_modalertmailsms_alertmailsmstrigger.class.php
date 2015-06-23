@@ -190,7 +190,7 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 					$contact->fetch($con['id']);
 					$contact->code_alert = $con['code']; // llx_c_type_contact
 					
-					$TAlertMailSms->send($contact, $conf, $langs, $obj->ref, $forceMail, $forceSms);
+					$TAlertMailSms->send($contact, $conf, $langs, $obj, $forceMail, $forceSms);
 				}
 	
 				if (count($TAlertMailSms->errors) > 0) 

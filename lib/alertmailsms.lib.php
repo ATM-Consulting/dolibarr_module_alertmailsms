@@ -92,7 +92,7 @@ function getInfoAccountOvh()
 		,1 => 0
 	);
 	
-	if (!empty($conf->global->ALERTMAILSMS_OVH_KEY) && !empty($conf->global->ALERTMAILSMS_OVH_SECRET) && !empty($conf->global->ALERTMAILSMS_OVH_CONSUMER_KEY))
+	if (!empty($conf->global->ALERTMAILSMS_SEND_SMS_ENABLED) && !empty($conf->global->ALERTMAILSMS_OVH_KEY) && !empty($conf->global->ALERTMAILSMS_OVH_SECRET) && !empty($conf->global->ALERTMAILSMS_OVH_CONSUMER_KEY))
 	{
 		$TAlertMailSms = new TAlertMailSms;
 		$TCompteSms = $TAlertMailSms->getComptesSmsOvh();
