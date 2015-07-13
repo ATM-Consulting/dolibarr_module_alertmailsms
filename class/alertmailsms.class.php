@@ -119,7 +119,7 @@ class TAlertMailSms extends TObjetStd
 		}
 	}
 	
-	private function _sendMail(&$contact, &$conf, &$langs, &$commande)
+	private function _sendMail(&$contact, &$conf, &$langs, &$currentObject)
 	{		
 		if (empty($contact->email)) return false;
 
@@ -131,31 +131,22 @@ class TAlertMailSms extends TObjetStd
 
 		if ($conf->global->ALERTMAILSMS_SEND_FILE)
 		{
+			$ref = dol_sanitizeFileName($currentObject->ref);
 			if ($conf->global->ALERTMAILSMS_TRIGGER == 'ORDER_VALIDATE')
 			{
-				$comref = dol_sanitizeFileName($commande->ref);
-				$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
-				
-				$filename = basename($file);
-				$mimefile=dol_mimetype($file);
-				
-				$filename_list[] = $file;
-				$mimetype_list[] = $mimefile;
-				$mimefilename_list[] = $filename;
+				$file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 			}
-			elseif ($conf->global->ALERTMAILSMS_TRIGGER == 'SHIPPING_VALIDATE')
+			else
 			{
-				$expref = dol_sanitizeFileName($commande->ref);
-				$file = $conf->expedition->dir_output . '/' . $expref . '/' . $expref . '.pdf';
-				
-				$filename = basename($file);
-				$mimefile=dol_mimetype($file);
-				
-				$filename_list[] = $file;
-				$mimetype_list[] = $mimefile;
-				$mimefilename_list[] = $filename;
+				$file = $conf->expedition->dir_output . '/sending/' . $ref . '/' . $ref . '.pdf';
 			}
 			
+			$filename = basename($file);
+			$mimefile=dol_mimetype($file);
+			
+			$filename_list[] = $file;
+			$mimetype_list[] = $mimefile;
+			$mimefilename_list[] = $filename;
 		}
 		
 		// Construct mail
@@ -271,7 +262,7 @@ class TAlertMailSms extends TObjetStd
 		return $res;
 	} 
 	
-	public function send(&$contact, &$conf, &$langs, $commande, $forceMail = false, $forceSms = false)
+	public function send(&$contact, &$conf, &$langs, &$commande, &$currentObject, $forceMail = false, $forceSms = false)
 	{
 		if (empty($this->TSearch) && empty($this->TReplace))
 		{
@@ -288,7 +279,7 @@ class TAlertMailSms extends TObjetStd
 			$this->TReplace[] = dol_print_date($commande->date_commande, 'daytext');
 		}
 		
-		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS) && ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_MAIL || $forceMail)) $this->_sendMail($contact, $conf, $langs, $commande);
+		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS) && ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_MAIL || $forceMail)) $this->_sendMail($contact, $conf, $langs, $currentObject);
 		elseif ($conf->global->ALERTMAILSMS_SEND_SMS_ENABLED && ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_SMS || $forceSms)) $this->_sendSms($contact, $conf, $langs);
 	}
 	

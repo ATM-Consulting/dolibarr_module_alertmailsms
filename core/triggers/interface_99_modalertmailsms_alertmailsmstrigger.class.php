@@ -163,13 +163,14 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 			
 			if ($object->element == 'shipping' && $object->origin_id > 0)
 			{
-				expedition_pdf_create($db, $object, $object->modelpdf, $langs);
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) $r = expedition_pdf_create($db, $object, $object->modelpdf, $langs);
+				
 				$obj = new Commande($db);
 				$obj->fetch($object->origin_id);
 			}
 			else 
 			{
-				commande_pdf_create($db, $object, $object->modelpdf, $langs);
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $langs);
 				$obj = &$object; 
 			}
 			
@@ -192,7 +193,7 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 					$contact->fetch($con['id']);
 					$contact->code_alert = $con['code']; // llx_c_type_contact
 					
-					$TAlertMailSms->send($contact, $conf, $langs, $obj, $forceMail, $forceSms);
+					$TAlertMailSms->send($contact, $conf, $langs, $obj, $object, $forceMail, $forceSms);
 				}
 	
 				if (count($TAlertMailSms->errors) > 0) 
