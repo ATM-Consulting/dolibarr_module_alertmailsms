@@ -163,11 +163,13 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 			
 			if ($object->element == 'shipping' && $object->origin_id > 0)
 			{
+				expedition_pdf_create($db, $object, $object->modelpdf, $langs);
 				$obj = new Commande($db);
 				$obj->fetch($object->origin_id);
 			}
 			else 
 			{
+				commande_pdf_create($db, $object, $object->modelpdf, $langs);
 				$obj = &$object; 
 			}
 			
