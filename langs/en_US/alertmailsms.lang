@@ -7,6 +7,7 @@ AlertMailSmsSetup = Alert Mail/SMS module setup
 AlertMailSmsAbout = About Alert Mail/SMS
 
 AlertMailSmsTrigger=Event on which the alert is triggered
+AlertMailSmsSendFile=Attach the order or shipment file to mail
 AlertMailSmsCTypeMail=Type of contact sould be notified by mail
 AlertMailSmsCTypeSms=Type of contact sould be notified by SMS
 AlertMailSmsPhoneAttribute=Contact's phone field use to send sms
@@ -47,3 +48,4 @@ AlertMailSmsOvhCredtsLeftValue=%d credit(s) left
 ALERTMAILSMS_ERR_NO_PLATFORM=Error: unknown or invalid selected platform
 
 AlertMailSmsCreditsUsed=%d credit(s) used
+AlertMailSmsNumberMailSent=%d mail(s) sent

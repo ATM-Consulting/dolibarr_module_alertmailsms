@@ -19,6 +19,7 @@ class TAlertMailSms extends TObjetStd
 		$this->TSearch = array();
 		$this->TReplace = array();
 		$this->creditsUsed = 0;
+		$this->mailSent = 0;
 		
 		$this->dolibarr_version = versiondolibarrarray();
 		
@@ -118,33 +119,67 @@ class TAlertMailSms extends TObjetStd
 		}
 	}
 	
-	private function _sendMail(&$contact, &$conf, &$langs)
+	private function _sendMail(&$contact, &$conf, &$langs, &$commande)
 	{		
 		if (empty($contact->email)) return false;
 
 		$msg = str_replace($this->TSearch, $this->TReplace, $conf->global->ALERTMAILSMS_MSG_MAIL);
 
+		$filename_list = array();
+		$mimetype_list = array();
+		$mimefilename_list = array();
+
+		if ($conf->global->ALERTMAILSMS_SEND_FILE)
+		{
+			if ($conf->global->ALERTMAILSMS_TRIGGER == 'ORDER_VALIDATE')
+			{
+				$comref = dol_sanitizeFileName($commande->ref);
+				$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
+				
+				$filename = basename($file);
+				$mimefile=dol_mimetype($file);
+				
+				$filename_list[] = $file;
+				$mimetype_list[] = $mimefile;
+				$mimefilename_list[] = $filename;
+			}
+			elseif ($conf->global->ALERTMAILSMS_TRIGGER == 'SHIPPING_VALIDATE')
+			{
+				$expref = dol_sanitizeFileName($commande->ref);
+				$file = $conf->expedition->dir_output . '/' . $expref . '/' . $expref . '.pdf';
+				
+				$filename = basename($file);
+				$mimefile=dol_mimetype($file);
+				
+				$filename_list[] = $file;
+				$mimetype_list[] = $mimefile;
+				$mimefilename_list[] = $filename;
+			}
+			
+		}
+		
 		// Construct mail
 		$CMail = new CMailFile(	
 			$conf->global->ALERTMAILSMS_SUBJECT_MAIL
 			,$contact->email
 			,$conf->global->MAIN_MAIL_EMAIL_FROM
 			,$msg
-			/*,$filename_list=array()
+			,$filename_list=array()
 			,$mimetype_list=array()
 			,$mimefilename_list=array()
-			,$addr_cc=""
-			,$addr_bcc=""
-			,$deliveryreceipt=0
-			,$msgishtml=0
-			,$errors_to=''
-			,$css=''*/
+			,'' //,$addr_cc=""
+			,'' //,$addr_bcc=""
+			,'' //,$deliveryreceipt=0
+			,'' //,$msgishtml=0*/
+			,$errors_to=$conf->global->MAIN_MAIL_ERRORS_TO
+			//,$css=''
 		);
 		
 		// Send mail
 		$CMail->sendfile();
 		
 		if ($CMail->error) $this->errors[] = $CMail->error;
+		else $this->mailSent++;
 	}
 	
 	private function _sendSms(&$contact, &$conf, &$langs)
@@ -253,7 +288,7 @@ class TAlertMailSms extends TObjetStd
 			$this->TReplace[] = dol_print_date($commande->date_commande, 'daytext');
 		}
 		
-		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS) && ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_MAIL || $forceMail)) $this->_sendMail($contact, $conf, $langs);
+		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS) && ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_MAIL || $forceMail)) $this->_sendMail($contact, $conf, $langs, $commande);
 		elseif ($conf->global->ALERTMAILSMS_SEND_SMS_ENABLED && ($contact->code_alert == $conf->global->ALERTMAILSMS_CTYPE_SMS || $forceSms)) $this->_sendSms($contact, $conf, $langs);
 	}
 	

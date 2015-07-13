@@ -200,7 +200,7 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 				}
 				else 
 				{
-					$this->_showOK($langs, $TAlertMailSms->creditsUsed);	
+					$this->_showOK($conf, $langs, $TAlertMailSms);	
 				}
 			}
 			
@@ -212,14 +212,20 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 		return 0;
 	}
 
-	private function _showOK(&$langs, $creditsUsed)
+	private function _showOK(&$conf, &$langs, &$TAlertMailSms)
 	{
 		$langs->load('alertmailsms@alertmailsms');
-		
 		$dolibarr_version = versiondolibarrarray();	
+			
+		if ($conf->global->ALERTMAILSMS_SEND_SMS_ENABLED)
+		{
+			if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessage($langs->trans('AlertMailSmsCreditsUsed', $TAlertMailSms->creditsUsed));
+			else setEventMessages('', $langs->trans('AlertMailSmsCreditsUsed', $TAlertMailSms->creditsUsed));	
+		}
 		
-		if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessage($langs->trans('AlertMailSmsCreditsUsed', $creditsUsed));
-		else setEventMessages('', $langs->trans('AlertMailSmsCreditsUsed', $creditsUsed));
+		if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessage($langs->trans('AlertMailSmsNumberMailSent', $TAlertMailSms->mailSent));
+		else setEventMessages('', $langs->trans('AlertMailSmsNumberMailSent', $TAlertMailSms->mailSent));	
+		
 	}
 
 	private function _showError(&$TAlertMailSms)

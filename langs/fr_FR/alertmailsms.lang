@@ -7,6 +7,7 @@ AlertMailSmsSetup = Configuration du module Alerte Mail/SMS
 AlertMailSmsAbout = A propos du module Alerte Mail/SMS
 
 AlertMailSmsTrigger=Événement sur lequel l'alerte est déclenchée
+AlertMailSmsSendFile=Joindre le fichier de la commande ou de l'expédition dans l'email
 AlertMailSmsCTypeMail=Type de contact devant recevoir une notification par mail
 AlertMailSmsCTypeSms=Type de contact devant recevoir une notification par SMS
 AlertMailSmsPhonePro=Tél pro.
@@ -47,3 +48,4 @@ AlertMailSmsOvhCredtsLeftValue=%d crédit(s) restant(s)
 ALERTMAILSMS_ERR_NO_PLATFORM=Erreur : plate-forme sélectionné inconnue ou non valide
 
 AlertMailSmsCreditsUsed=%d crédit(s) utilisé(s)
+AlertMailSmsNumberMailSent=%d mail(s) envoyé(s)
