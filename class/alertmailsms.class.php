@@ -164,9 +164,9 @@ class TAlertMailSms extends TObjetStd
 			,$contact->email
 			,$conf->global->MAIN_MAIL_EMAIL_FROM
 			,$msg
-			,$filename_list=array()
-			,$mimetype_list=array()
-			,$mimefilename_list=array()
+			,$filename_list
+			,$mimetype_list
+			,$mimefilename_list
 			,'' //,$addr_cc=""
 			,'' //,$addr_bcc=""
 			,'' //,$deliveryreceipt=0
