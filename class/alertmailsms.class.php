@@ -268,6 +268,8 @@ class TAlertMailSms extends TObjetStd
 		{
 			foreach ($contact as $key => $value) 
 			{
+				if (is_object($value)) continue;
+				
 			 	$this->TSearch[] = '__CONTACT_'.strtoupper($key).'__';
 				$this->TReplace[] = $value;
 			}
