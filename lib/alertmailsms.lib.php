@@ -34,7 +34,7 @@ function AlertMailSmsAdminPrepareHead()
 	$head = array();
 	   
 	$head[$h][0] = dol_buildpath("/alertmailsms/admin/alertmailsms_setup.php", 1);
-	$head[$h][1] = $langs->trans("Settings");
+	$head[$h][1] = $langs->trans("AlertMailSmsSettings");
 	$head[$h][2] = 'settings';
 	$h++;
 	$head[$h][0] = dol_buildpath("/alertmailsms/admin/alertmailsms_about.php", 1);

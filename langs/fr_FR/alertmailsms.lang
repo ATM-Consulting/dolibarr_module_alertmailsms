@@ -49,3 +49,5 @@ ALERTMAILSMS_ERR_NO_PLATFORM=Erreur : plate-forme sélectionné inconnue ou non 
 
 AlertMailSmsCreditsUsed=%d crédit(s) utilisé(s)
 AlertMailSmsNumberMailSent=%d mail(s) envoyé(s)
+
+AlertMailSmsSettings=Paramètres
