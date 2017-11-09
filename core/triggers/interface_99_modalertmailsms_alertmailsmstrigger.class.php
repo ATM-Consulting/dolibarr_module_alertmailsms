@@ -163,14 +163,26 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 			
 			if ($object->element == 'shipping' && $object->origin_id > 0)
 			{
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) $r = expedition_pdf_create($db, $object, $object->modelpdf, $langs);
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					if((float) DOL_VERSION <= 3.6) {
+						$r = expedition_pdf_create($db, $object, $object->modelpdf, $langs);
+					} else {
+						$object->generateDocument($object->modelpdf, $langs);
+					}
+				}
 				
 				$obj = new Commande($db);
 				$obj->fetch($object->origin_id);
 			}
 			else 
 			{
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $langs);
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					if((float) DOL_VERSION <= 3.6) {
+						commande_pdf_create($db, $object, $object->modelpdf, $langs);
+					} else {
+						$object->generateDocument($object->modelpdf, $langs);
+					}
+				}
 				$obj = &$object; 
 			}
 			
