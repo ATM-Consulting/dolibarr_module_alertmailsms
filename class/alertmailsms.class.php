@@ -26,12 +26,12 @@ class TAlertMailSms extends TObjetStd
 		$this->_includeClass($conf, $langs);
 	}
 
-	public function save()
+	public function save(&$PDOdb = null, $id = 0, $withChild = true)
 	{
 		return true;
 	}
 	
-	public function load()
+	public function load(&$PDOdb = null, $id = 0, $withChild = true)
 	{
 		return true;
 	}
