@@ -145,7 +145,7 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		global $db;
+		global $db, $conf;
 			
 		//ORDER_VALIDATE || SHIPPING_VALIDATE
 		$actionTrigger = $conf->global->ALERTMAILSMS_TRIGGER;
@@ -164,8 +164,11 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 			if ($object->element == 'shipping' && $object->origin_id > 0)
 			{
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					$object->fetch_lines();
+					$model = $object->modelpdf;
+					if(!empty($conf->global->ALERTMAILSMS_MODEL_PDF_MAIL_EXPEDITION)) $model = $conf->global->ALERTMAILSMS_MODEL_PDF_MAIL_EXPEDITION;
 					if((float) DOL_VERSION <= 3.6) {
-						$r = expedition_pdf_create($db, $object, $object->modelpdf, $langs);
+						$r = expedition_pdf_create($db, $object, $model, $langs);
 					} else {
 						$object->generateDocument($object->modelpdf, $langs);
 					}
