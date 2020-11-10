@@ -153,7 +153,7 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 		if ($action == $actionTrigger) 
 		{
 /************/
-			$debug = GETPOST('DEBUG');
+			$debug = GETPOST('DEBUG','int');
 /************/						
             if(!defined('INC_FROM_DOLIBARR')) define('INC_FROM_DOLIBARR',true);
 			
@@ -194,8 +194,8 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 
 			if (count($TContact) > 0)
 			{
-				$forceMail = ($debug === 1 ? GETPOST('forcemail') : 0);
-				$forceSms = ($debug === 1 ? GETPOST('forcesms') : 0);
+				$forceMail = ($debug === 1 ? GETPOST('forcemail','int') : 0);
+				$forceSms = ($debug === 1 ? GETPOST('forcesms','int') : 0);
 								
 				$TAlertMailSms = new TAlertMailSms;
 				
