@@ -126,7 +126,7 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 	 * @return int                  <0 if KO, 0 if no triggered ran, >0 if OK
 	 * @deprecated Replaced by DolibarrTriggers::runTrigger()
 	 */
-	public function run_trigger($action, $object, $user, $langs, $conf)
+	public function run_trigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		return $this->runTrigger($action, $object, $user, $langs, $conf);
 	}
