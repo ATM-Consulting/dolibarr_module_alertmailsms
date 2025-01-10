@@ -1,5 +1,5 @@
 {
-    "name": "ovh",
+    "name": "vendor/ovh",
     "description": "Wrapper for OVH APIs",
     "require": {
         "ovh/ovh": "dev-master"
