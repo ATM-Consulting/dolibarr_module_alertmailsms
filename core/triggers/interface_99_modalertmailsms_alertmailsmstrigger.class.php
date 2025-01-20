@@ -148,7 +148,7 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 		global $db, $conf;
 
 		//ORDER_VALIDATE || SHIPPING_VALIDATE
-		$actionTrigger = $conf->global->ALERTMAILSMS_TRIGGER;
+		$actionTrigger = getDolGlobalString("ALERTMAILSMS_TRIGGER");
 
 		if ($action == $actionTrigger)
 		{

@@ -47,7 +47,7 @@ class TAlertMailSms extends TObjetStd
 			case 'OVH':
 				dol_include_once('/alertmailsms/loadOVH.php');
 
-				if (empty(getDolGlobalString("ALERTMAILSMS_OVH_KEY")) || empty(getDolGlobalString("ALERTMAILSMS_OVH_SECRET")) || empty(getDolGlobalString("ALERTMAILSMS_OVH_CONSUMER_KEY")))
+				if (!getDolGlobalString("ALERTMAILSMS_OVH_KEY") || !getDolGlobalString("ALERTMAILSMS_OVH_SECRET") || !getDolGlobalString("ALERTMAILSMS_OVH_CONSUMER_KEY"))
 				{
 					$this->ovh_api = null;
 				}
@@ -132,7 +132,7 @@ class TAlertMailSms extends TObjetStd
 		if (getDolGlobalInt("ALERTMAILSMS_SEND_FILE"))
 		{
 			$ref = dol_sanitizeFileName($currentObject->ref);
-			if ($conf->global->ALERTMAILSMS_TRIGGER == 'ORDER_VALIDATE')
+			if (getDolGlobalString("ALERTMAILSMS_TRIGGER") == 'ORDER_VALIDATE')
 			{
 				$file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 			}
@@ -281,7 +281,7 @@ class TAlertMailSms extends TObjetStd
 			$this->TReplace[] = dol_print_date($commande->date_commande, 'daytext');
 		}
 
-		if (empty(getDolGlobalInt("MAIN_DISABLE_ALL_MAILS")) && ($contact->code_alert == getDolGlobalString("ALERTMAILSMS_CTYPE_MAIL") || $forceMail)) $this->_sendMail($contact, $conf, $langs, $currentObject);
+		if (!getDolGlobalInt("MAIN_DISABLE_ALL_MAILS") && ($contact->code_alert == getDolGlobalString("ALERTMAILSMS_CTYPE_MAIL") || $forceMail)) $this->_sendMail($contact, $conf, $langs, $currentObject);
 		elseif (getDolGlobalString("ALERTMAILSMS_SEND_SMS_ENABLED") && ($contact->code_alert == getDolGlobalString("ALERTMAILSMS_CTYPE_SMS") || $forceSms)) $this->_sendSms($contact, $conf, $langs);
 	}
 
