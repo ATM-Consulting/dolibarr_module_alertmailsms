@@ -61,7 +61,7 @@ class modAlertMailSms extends DolibarrModules
 		// (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Description of module MyModule";
 		// Possible values for version are: 'development', 'experimental' or version
-		$this->version = '1.2.2';
+		$this->version = '1.3.0';
 		// Key used in llx_const table to save module status enabled/disabled
 		// (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
@@ -138,7 +138,7 @@ class modAlertMailSms extends DolibarrModules
 		// Minimum version of PHP required by module
 		$this->phpmin = array(5, 3);
 		// Minimum version of Dolibarr required by module
-		$this->need_dolibarr_version = array(3, 6);
+		$this->need_dolibarr_version = array(16, 0);
 		// Language files list (langfiles@mymodule)
 		$this->langfiles = array("alertmailsms@alertmailsms");
 		// Constants
@@ -203,7 +203,7 @@ class modAlertMailSms extends DolibarrModules
 			$conf->alertmailsms->enabled = 0;
 		}
 		$this->dictionaries = array();
-		
+
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		$this->boxes = array(); // Boxes list
@@ -226,7 +226,7 @@ class modAlertMailSms extends DolibarrModules
 		$this->rights[$r][4] = 'assign';
 		$this->rights[$r][5] = 'mail';
 		$r++;*/
-		
+
 	}
 
 	/**
@@ -241,7 +241,7 @@ class modAlertMailSms extends DolibarrModules
 	public function init($options = '')
 	{
 		$sql = array();
-		
+
 		return $this->_init($sql, $options);
 	}
 
