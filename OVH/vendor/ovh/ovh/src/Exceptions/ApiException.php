@@ -1,5 +1,5 @@
 <?php
-# Copyright (c) 2013-2014, OVH SAS.
+# Copyright (c) 2013-2025, OVH SAS.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -40,9 +40,7 @@ use Exception;
  *
  * @package Ovh
  * @category Exceptions
- * @author Vincent Cassé <vincent.casse@ovh.net>
  */
 class ApiException extends Exception
 {
-
 }

@@ -23,16 +23,16 @@
  *				Put some comments here
  */
 
- 
+
 function AlertMailSmsAdminPrepareHead()
 {
 	global $langs, $conf;
-	   
+
 	$langs->load("alertmailsms@alertmailsms");
-	   
+
 	$h = 0;
 	$head = array();
-	   
+
 	$head[$h][0] = dol_buildpath("/alertmailsms/admin/alertmailsms_setup.php", 1);
 	$head[$h][1] = $langs->trans("AlertMailSmsSettings");
 	$head[$h][2] = 'settings';
@@ -41,7 +41,7 @@ function AlertMailSmsAdminPrepareHead()
 	$head[$h][1] = $langs->trans("About");
 	$head[$h][2] = 'about';
 	$h++;
-	   
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(
@@ -50,30 +50,30 @@ function AlertMailSmsAdminPrepareHead()
 	//$this->tabs = array(
 	//      'entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'alertmailsms');
-	   
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'alertmailsms');
+
 	return $head;
 }
- 
+
 function getCTypeContact(&$db)
 {
 	$sql = 'SELECT code, libelle FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE element = "commande" AND source="external" AND active = 1';
 	$resql = $db->query($sql);
-	
+
 	if ($resql)
 	{
 		if ($db->num_rows($resql) > 0)
 		{
 			$res = array('' => '');
-			
+
 			while ($row = $db->fetch_array($resql))
 			{
 				$res[$row['code']] = $row['libelle'];
 			}
-			
+
 			return $res;
 		}
-		
+
 		return array();
 	}
 	else
@@ -86,17 +86,17 @@ function getCTypeContact(&$db)
 function getInfoAccountOvh()
 {
 	global $langs,$conf;
-	
+
 	$res = array(
 		0 => array('' => '')
 		,1 => 0
 	);
-	
+
 	if (!empty($conf->global->ALERTMAILSMS_SEND_SMS_ENABLED) && !empty($conf->global->ALERTMAILSMS_OVH_KEY) && !empty($conf->global->ALERTMAILSMS_OVH_SECRET) && !empty($conf->global->ALERTMAILSMS_OVH_CONSUMER_KEY))
 	{
 		$TAlertMailSms = new TAlertMailSms;
 		$TCompteSms = $TAlertMailSms->getComptesSmsOvh();
-		
+
 		if ($TCompteSms)
 		{
 			foreach ($TCompteSms as $index => $value)
@@ -104,9 +104,9 @@ function getInfoAccountOvh()
 				$res[0][$value] = $value;
 			}
 		}
-		
+
 		$res[1] = $TAlertMailSms->getCreditsLeft();
 	}
-	
+
 	return $res;
 }

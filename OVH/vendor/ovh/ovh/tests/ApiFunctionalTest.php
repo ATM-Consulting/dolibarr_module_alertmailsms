@@ -1,5 +1,5 @@
 <?php
-# Copyright (c) 2013-2014, OVH SAS.
+# Copyright (c) 2013-2025, OVH SAS.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,136 +28,250 @@
 namespace Ovh\tests;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Subscriber\Mock;
+use GuzzleHttp\Exception\ClientException;
 use Ovh\Api;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Functional tests of Api class
  *
- * @package Ovh
+ * @package  Ovh
  * @category Ovh
- * @author Vincent Cassé <vincent.casse@ovh.net>
  */
-class ApiFunctionalTest extends \PHPUnit_Framework_TestCase {
+class ApiFunctionalTest extends TestCase
+{
 
-	/**
-	 * Define id to create object
-	 */
-	protected function setUp()
+    /**
+     * @var string
+     */
+    private $application_key;
+
+    /**
+     * @var string
+     */
+    private $application_secret;
+
+    /**
+     * @var string
+     */
+    private $consumer_key;
+
+    /**
+     * @var string
+     */
+    private $endpoint;
+
+    /**
+     * @var string
+     */
+    private $rangeIP;
+
+    /**
+     * @var string
+     */
+    private $alternativeRangeIP;
+
+    /**
+     * @var Client
+     */
+    private $client;
+
+    /**
+     * @var Api
+     */
+    private $api;
+
+    /**
+     * Define id to create object
+     */
+    protected function setUp() :void
     {
-		$this->application_key = getenv('APP_KEY');
-		$this->application_secret = getenv('APP_SECRET');
-		$this->consumer_key = getenv('CONSUMER');
-		$this->endpoint = getenv('ENDPOINT');
-		$this->rangeIP = '127.0.0.20/32';
+        foreach (['APP_KEY', 'APP_SECRET', 'CONSUMER', 'ENDPOINT'] as $envName) {
+            if (!getenv($envName)) {
+                $this->markTestSkipped("Skip test due to missing $envName variable");
+                return;
+            }
+        }
+
+        $this->application_key    = getenv('APP_KEY');
+        $this->application_secret = getenv('APP_SECRET');
+        $this->consumer_key       = getenv('CONSUMER');
+        $this->endpoint           = getenv('ENDPOINT');
+        $this->rangeIP            = '127.0.0.20/32';
+        $this->alternativeRangeIP = '127.0.0.30/32';
 
         $this->client = new Client();
-        $this->api = new Api($this->application_key, $this->application_secret, $this->endpoint, $this->consumer_key, $this->client);
-
+        $this->api    = new Api(
+            $this->application_key,
+            $this->application_secret,
+            $this->endpoint,
+            $this->consumer_key,
+            $this->client
+        );
     }
 
     /**
      * Get private and protected method to unit test it
+     *
+     * @param string $name
+     *
+     * @return \ReflectionMethod
      */
     protected static function getPrivateMethod($name)
     {
-        $class = new \ReflectionClass('Ovh\Api');
+        $class  = new \ReflectionClass(\Ovh\Api::class);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
+
         return $method;
     }
 
+    /**
+     * Get private and protected property to unit test it
+     *
+     * @param string $name
+     *
+     * @return \ReflectionProperty
+     */
     protected static function getPrivateProperty($name)
     {
-        $class = new \ReflectionClass('Ovh\Api');
+        $class    = new \ReflectionClass(\Ovh\Api::class);
         $property = $class->getProperty($name);
         $property->setAccessible(true);
+
         return $property;
     }
 
-	/**
-	 * Test if result contains consumerKey and validationUrl
-	 */
-	public function testIfConsumerKeyIsReplace()
-	{
-		$property = self::getPrivateProperty('consumer_key');
-		$accessRules = json_decode(' [
+    /**
+     * Test if result contains consumerKey and validationUrl
+     */
+    public function testIfConsumerKeyIsReplace()
+    {
+        $property    = self::getPrivateProperty('consumer_key');
+        $accessRules = json_decode(' [
 			{ "method": "GET", "path": "/*" },
 			{ "method": "POST", "path": "/*" },
 			{ "method": "PUT", "path": "/*" },
 			{ "method": "DELETE", "path": "/*" }
-		] ') ;
+		] ');
 
-		$credentials = $this->api->requestCredentials($accessRules);
-		$consumer_key = $property->getValue($this->api);
+        $credentials  = $this->api->requestCredentials($accessRules);
+        $consumer_key = $property->getValue($this->api);
 
-		$this->assertEquals( $consumer_key , $credentials["consumerKey"]);
-		$this->assertNotEquals( $consumer_key, $this->consumer_key );
-	}
+        $this->assertSame($consumer_key, $credentials["consumerKey"]);
+        $this->assertNotEquals($consumer_key, $this->consumer_key);
+    }
 
-	/**
-	 * Test if put request on me
-	 */
-	public function testPutRestrictionAccessIp()
-	{
-		$api = new Api($this->application_key, $this->application_secret, $this->endpoint,  $this->consumer_key, $this->client);
-		$invoker = self::getPrivateMethod('rawCall');
-		$params = new \StdClass();
-		$params->ip = $this->rangeIP;
-		$params->rule = "deny";
-		$params->warning = true;
+    /**
+     * Test if post request on me
+     */
+    public function testPostRestrictionAccessIp()
+    {
+        $this->assertNull(
+            $this->api->post('/me/accessRestriction/ip', ['ip' => $this->rangeIP, 'rule' => 'deny', 'warning' => true])
+        );
 
-		$result = $invoker->invokeArgs($api, array('POST', '/me/accessRestriction/ip', $params)) ;
-		$this->assertNull( $result );
-	}
+        $this->assertNull(
+            $this->api->post('/me/accessRestriction/ip', ['ip'      => $this->alternativeRangeIP,
+                                                          'rule'    => 'deny',
+                                                          'warning' => true,
+            ])
+        );
+    }
 
-	/**
-	 * Test if get request on /me
-	 */
-	public function testGetRestrictionAccessIP()
-	{
-		$api = new Api($this->application_key, $this->application_secret, $this->endpoint,  $this->consumer_key, $this->client);
-		$invoker = self::getPrivateMethod('rawCall');
-		$result = $invoker->invokeArgs($api, array('GET', '/me/accessRestriction/ip')) ;
-		foreach ($result as $restrictionId) {
-			$restriction = $invoker->invokeArgs($api, array('GET', '/me/accessRestriction/ip/' . $restrictionId)) ;
+    /**
+     * Test if get request on /me
+     */
+    public function testGetRestrictionAccessIP()
+    {
+        $result = $this->api->get('/me/accessRestriction/ip');
 
-			if ($restriction["ip"] == $this->rangeIP) {
-				$this->assertTrue(true);
-				break;
-			}
-		}
-	}
+        $restrictionIps = [];
 
-	/**
-	 * Test if delete request on /me
-	 */
-	public function testDeleteRestrictionAccessIP()
-	{
-		$api = new Api($this->application_key, $this->application_secret, $this->endpoint,  $this->consumer_key, $this->client);
-		$invoker = self::getPrivateMethod('rawCall');
+        foreach ($result as $restrictionId) {
+            $restriction = $this->api->get('/me/accessRestriction/ip/' . $restrictionId);
 
-		$result = $invoker->invokeArgs($api, array('GET', '/me/accessRestriction/ip')) ;
-		foreach ($result as $restrictionId) {
-			$restriction = $invoker->invokeArgs($api, array('GET', '/me/accessRestriction/ip/' . $restrictionId)) ;
+            $restrictionIps[] = $restriction['ip'];
+        }
 
-			if ($restriction["ip"] == $this->rangeIP) {
-				$result = $invoker->invokeArgs($api, array('DELETE', '/me/accessRestriction/ip/'. $restrictionId)) ;
-				$this->assertNull( $result );
-				break;
-			}
-		}
-	}
+        $this->assertContains($this->rangeIP, $restrictionIps);
+        $this->assertContains($this->alternativeRangeIP, $restrictionIps);
+    }
 
-	/**
-	 * Test if request without authentication works
-	 */
-	public function testIfRequestWithoutAuthenticationWorks()
-	{
-		$api = new Api($this->application_key, $this->application_secret, $this->endpoint,  NULL, $this->client);
-		$invoker = self::getPrivateMethod('rawCall');
-		$result = $invoker->invokeArgs($api, array('GET', '/xdsl/incidents')) ;
-	}
+    /**
+     * Test if delete request on /me
+     */
+    public function testPutRestrictionAccessIP()
+    {
+        $result = $this->api->get('/me/accessRestriction/ip');
 
+        foreach ($result as $restrictionId) {
+            $restriction = $this->api->get('/me/accessRestriction/ip/' . $restrictionId);
+
+            if (in_array($restriction["ip"], [$this->rangeIP, $this->alternativeRangeIP])) {
+                $this->assertNull(
+                    $this->api->put('/me/accessRestriction/ip/' . $restrictionId, ['rule' => 'accept', 'warning' => true])
+                );
+
+                $restriction = $this->api->get('/me/accessRestriction/ip/' . $restrictionId);
+                $this->assertSame('accept', $restriction['rule']);
+            }
+        }
+    }
+
+    /**
+     * Test if delete request on /me
+     */
+    public function testDeleteRestrictionAccessIP()
+    {
+        $result = $this->api->get('/me/accessRestriction/ip');
+        foreach ($result as $restrictionId) {
+            $restriction = $this->api->get('/me/accessRestriction/ip/' . $restrictionId);
+
+            if (in_array($restriction["ip"], [$this->rangeIP, $this->alternativeRangeIP])) {
+                $result = $this->api->delete('/me/accessRestriction/ip/' . $restrictionId);
+                $this->assertNull($result);
+            }
+        }
+    }
+
+    /**
+     * Test if request without authentication works
+     */
+    public function testIfRequestWithoutAuthenticationWorks()
+    {
+        $api     = new Api($this->application_key, $this->application_secret, $this->endpoint, null, $this->client);
+        $invoker = self::getPrivateMethod('rawCall');
+        $result = $invoker->invokeArgs($api, ['GET', '/xdsl/incidents']);
+        $this->assertIsObject($result);
+    }
+
+    /**
+     * Test Api::get
+     */
+    public function testApiGetWithParameters()
+    {
+        $this->expectException(ClientException::class);
+
+        $this->api->get('/me/accessRestriction/ip', ['foo' => 'bar']);
+    }
+
+    /**
+     * Test Api::get, should build valide signature
+     */
+    public function testApiGetWithQueryString()
+    {
+        $result = $this->api->get('/me/api/credential', ['status' => 'pendingValidation']);
+        $this->assertIsArray($result);
+    }
+
+    /**
+     * Test APi::get without authentication
+     */
+    public function testApiGetWithoutAuthentication()
+    {
+        $api = new Api(null, null, $this->endpoint, null, $this->client);
+        $result = $api->get('/hosting/web/moduleList', null, null, false);
+        $this->assertIsArray($result);
+    }
 }
-

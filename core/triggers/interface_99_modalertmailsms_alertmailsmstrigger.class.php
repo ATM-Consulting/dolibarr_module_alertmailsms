@@ -146,52 +146,45 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		global $db, $conf;
-			
+
 		//ORDER_VALIDATE || SHIPPING_VALIDATE
-		$actionTrigger = $conf->global->ALERTMAILSMS_TRIGGER;
-		
-		if ($action == $actionTrigger) 
+		$actionTrigger = getDolGlobalString("ALERTMAILSMS_TRIGGER");
+
+		if ($action == $actionTrigger)
 		{
 /************/
 			$debug = GETPOST('DEBUG','int');
-/************/						
+/************/
             if(!defined('INC_FROM_DOLIBARR')) define('INC_FROM_DOLIBARR',true);
-			
+
 			dol_include_once('/contact/class/contact.class.php');
             dol_include_once('/alertmailsms/config.php');
 			dol_include_once('/alertmailsms/class/alertmailsms.class.php');
-			
+
 			if ($object->element == 'shipping' && $object->origin_id > 0)
 			{
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$object->fetch_lines();
 					$model = $object->modelpdf;
 					if(!empty($conf->global->ALERTMAILSMS_MODEL_PDF_MAIL_EXPEDITION)) $model = $conf->global->ALERTMAILSMS_MODEL_PDF_MAIL_EXPEDITION;
-					if((float) DOL_VERSION <= 3.6) {
-						$r = expedition_pdf_create($db, $object, $model, $langs);
-					} else {
 						$object->generateDocument($object->modelpdf, $langs);
-					}
+
 				}
-				
+
 				$obj = new Commande($db);
 				$obj->fetch($object->origin_id);
 			}
-			else 
+			else
 			{
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-					if((float) DOL_VERSION <= 3.6) {
-						commande_pdf_create($db, $object, $object->modelpdf, $langs);
-					} else {
 						$object->generateDocument($object->modelpdf, $langs);
-					}
 				}
-				$obj = &$object; 
+				$obj = &$object;
 			}
-			
+
 			// TODO $object->liste_contact(-1, 'internal', 0) pour récupérer la liste des contacts interne (llx_user) à mettre en conf si l'utilisateur veut faire un choix
 			// llx_user devra aussi implémenter les champs alert_mail et alert_sms
-			
+
 			// Array of contact's object
 			$TContact = $obj->liste_contact(-1, 'external', 0);
 
@@ -199,59 +192,59 @@ class Interfacealertmailsmstrigger extends AlertMailSmsTrigger
 			{
 				$forceMail = ($debug === 1 ? GETPOST('forcemail','int') : 0);
 				$forceSms = ($debug === 1 ? GETPOST('forcesms','int') : 0);
-								
+
 				$TAlertMailSms = new TAlertMailSms;
-				
+
 				foreach ($TContact as $con)
 				{
 					$contact = new Contact($db);
 					$contact->fetch($con['id']);
 					$contact->code_alert = $con['code']; // llx_c_type_contact
-					
+
 					$TAlertMailSms->send($contact, $conf, $langs, $obj, $object, $forceMail, $forceSms);
 				}
-	
-				if (count($TAlertMailSms->errors) > 0) 
+
+				if (count($TAlertMailSms->errors) > 0)
 				{
 					$this->_showError($TAlertMailSms);
 					if (!empty($conf->global->ALERTMAILSMS_STOP_ON_ERR)) return -1; // Dot not validate object
 				}
-				else 
+				else
 				{
-					$this->_showOK($conf, $langs, $TAlertMailSms);	
+					$this->_showOK($conf, $langs, $TAlertMailSms);
 				}
 			}
-			
+
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
-			
+
 			return 1;
 		}
-		
+
 		return 0;
 	}
 
 	private function _showOK(&$conf, &$langs, &$TAlertMailSms)
 	{
 		$langs->load('alertmailsms@alertmailsms');
-		$dolibarr_version = versiondolibarrarray();	
-			
+		$dolibarr_version = versiondolibarrarray();
+
 		if ($conf->global->ALERTMAILSMS_SEND_SMS_ENABLED)
 		{
 			if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessage($langs->trans('AlertMailSmsCreditsUsed', $TAlertMailSms->creditsUsed));
-			else setEventMessages('', $langs->trans('AlertMailSmsCreditsUsed', $TAlertMailSms->creditsUsed));	
+			else setEventMessages('', $langs->trans('AlertMailSmsCreditsUsed', $TAlertMailSms->creditsUsed));
 		}
-		
+
 		if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessage($langs->trans('AlertMailSmsNumberMailSent', $TAlertMailSms->mailSent));
-		else setEventMessages('', $langs->trans('AlertMailSmsNumberMailSent', $TAlertMailSms->mailSent));	
-		
+		else setEventMessages('', $langs->trans('AlertMailSmsNumberMailSent', $TAlertMailSms->mailSent));
+
 	}
 
 	private function _showError(&$TAlertMailSms)
 	{
-		$dolibarr_version = versiondolibarrarray();	
-		
+		$dolibarr_version = versiondolibarrarray();
+
 		if ($dolibarr_version[0] < 3 || ($dolibarr_version[0] == 3 && $dolibarr_version[1] < 7)) setEventMessage($TAlertMailSms->errors, 'errors');
 		else setEventMessages('', $TAlertMailSms->errors, 'errors');
 	}
-	
+
 }
