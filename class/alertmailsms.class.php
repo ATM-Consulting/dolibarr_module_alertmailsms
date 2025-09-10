@@ -131,7 +131,8 @@ class TAlertMailSms extends TObjetStd
 
 		if (getDolGlobalInt("ALERTMAILSMS_SEND_FILE"))
 		{
-			$ref = dol_sanitizeFileName($currentObject->newref);
+			$ref = dol_sanitizeFileName($currentObject->ref);
+			$newFileName = dol_sanitizeFileName($currentObject->newref).'.pdf';
 			if (getDolGlobalString("ALERTMAILSMS_TRIGGER") == 'ORDER_VALIDATE')
 			{
 				$file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
@@ -141,12 +142,11 @@ class TAlertMailSms extends TObjetStd
 				$file = $conf->expedition->dir_output . '/sending/' . $ref . '/' . $ref . '.pdf';
 			}
 
-			$filename = basename($file);
 			$mimefile=dol_mimetype($file);
 
 			$filename_list[] = $file;
 			$mimetype_list[] = $mimefile;
-			$mimefilename_list[] = $filename;
+			$mimefilename_list[] = $newFileName;
 		}
 
 		// Construct mail
